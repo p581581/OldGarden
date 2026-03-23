@@ -306,6 +306,10 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
         }
 
+        .product-img-wrap {
+            position: relative;
+            width: 100%;
+        }
         .product-img-placeholder {
             width: 100%;
             aspect-ratio: 3 / 2;
@@ -364,24 +368,23 @@
         }
 
         .add-btn {
+            position: absolute;
+            top: 8px; right: 8px;
             background-color: var(--primary-color);
             color: var(--white);
             border: none;
-            padding: 9px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1.2rem;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 1.05rem;
             line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.15s;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            transition: background 0.15s, transform 0.15s;
         }
-
-        .add-btn:hover {
-            background-color: #6d360e;
-        }
+        .add-btn:hover { background-color: #6d360e; transform: scale(1.12); }
 
         /* ── Cart Dialog ────────────────────────────────────── */
         .cart-overlay {
@@ -723,6 +726,7 @@
             .hero-tags { gap: 6px; }
             #contact iframe { height: 40vh; }
             .hero-title { display: none; }
+            .product-list { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -875,7 +879,7 @@
                 <a href="#info">訂購須知</a>
             </nav>
             <div class="footer-divider"></div>
-            <p class="footer-copy">© 老園丁窯烤麵包 &nbsp;·&nbsp; <a href="/login.html">管理員入口</a></p>
+            <p class="footer-copy">© 老園丁窯烤麵包 &nbsp;·&nbsp; <a href="/login.html">管理頁面</a></p>
         </div>
     </footer>
 
@@ -926,12 +930,14 @@
             }
             container.innerHTML = list.map(p => `
             <div class="product-card">
-                <div class="product-img-placeholder">${getImageHtml(p)}</div>
+                <div class="product-img-wrap">
+                    <div class="product-img-placeholder">${getImageHtml(p)}</div>
+                    <button class="add-btn" onclick="addToCart(${p.id})" title="加入購物車">🛒</button>
+                </div>
                 <div class="product-info">
                     <div class="product-title">${p.name}</div>
                     <div class="product-meta">${p.weight} / $${p.price}</div>
                     <div class="product-desc">${p.desc}</div>
-                    <button class="add-btn" onclick="addToCart(${p.id})" title="加入購物車">🛒</button>
                 </div>
             </div>
         `).join('');
