@@ -59,7 +59,7 @@ async function readProducts() {
     const { blobs } = await list({ prefix: PRODUCTS_BLOB_PATH });
     const blob = blobs.find(b => b.pathname === PRODUCTS_BLOB_PATH);
     if (!blob) return null;
-    const res = await fetch(`${blob.url}?t=${Date.now()}`);
+    const res = await fetch(blob.downloadUrl); // downloadUrl 直接從原始儲存讀取，繞過 CDN 快取
     return await res.json();
   } catch { return null; }
 }
@@ -78,7 +78,7 @@ async function readLogs() {
     const { blobs } = await list({ prefix: LOGS_BLOB_PATH });
     const blob = blobs.find(b => b.pathname === LOGS_BLOB_PATH);
     if (!blob) return [];
-    const res = await fetch(`${blob.url}?t=${Date.now()}`);
+    const res = await fetch(blob.downloadUrl); // 同上，繞過 CDN 快取
     return await res.json();
   } catch { return []; }
 }
@@ -163,9 +163,20 @@ app.delete('/api/products/:id', adminAuth, async (req, res) => {
     const idx = products.findIndex(p => p.id === id);
     if (idx === -1) return res.status(404).json({ error: '找不到產品' });
     const [removed] = products.splice(idx, 1);
-    if (removed.imagePath) await del(removed.imagePath).catch(() => {});
     await writeProducts(products);
-    res.json({ success: true, deleted: removed });
+
+    // 刪除 Blob 圖片（非阻斷，失敗只回傳警告）
+    let imageDeleted = false;
+    if (removed.imagePath) {
+      try {
+        await del(removed.imagePath);
+        imageDeleted = true;
+      } catch (e) {
+        console.error('[Blob] 圖片刪除失敗:', e.message);
+      }
+    }
+
+    res.json({ success: true, deleted: removed, imageDeleted });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

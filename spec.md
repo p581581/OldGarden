@@ -57,7 +57,8 @@
     * **描述**: 更新指定 ID 的產品欄位（如價格、描述、重量）。
     * **權限**: 需驗證管理員身分。
 * **DELETE `/api/products/:id`**
-    * **描述**: 刪除產品，並同步移除 Vercel Blob 中關聯的圖片。
+    * **描述**: 刪除產品，並同步移除 Vercel Blob 中關聯的圖片（`imagePath`）。
+    * **邏輯**: 先寫回 `products.json`，再刪除圖片；圖片刪除失敗不阻斷流程，回傳 `imageDeleted: false` 作為警告。
     * **權限**: 需驗證管理員身分。
 
 ### 2. 圖片處理 API (Image & Upload API)
