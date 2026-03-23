@@ -33,7 +33,7 @@
             position: fixed;
             top: 0; left: 0; right: 0;
             z-index: 200;
-            padding: 10px 20px;
+            padding: 11px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -309,13 +309,75 @@
         }
         .add-btn:hover { background-color: #6d360e; }
 
-        /* ── Cart ───────────────────────────────────────────── */
-        .cart-section {
+        /* ── Cart Dialog ────────────────────────────────────── */
+        .cart-overlay {
+            position: fixed; inset: 0; z-index: 500;
+            background: rgba(0,0,0,0.45);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s;
+        }
+        .cart-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .cart-dialog {
             background: var(--white);
+            width: 100%;
+            max-height: 88vh;
+            overflow-y: auto;
+            border-radius: 18px 18px 0 0;
             padding: 20px;
-            border-radius: 10px;
-            margin-top: 30px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+            transform: translateY(30px);
+            transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+        }
+        .cart-overlay.open .cart-dialog {
+            transform: translateY(0);
+        }
+        .cart-dialog-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #eee;
+        }
+        .cart-dialog-header h3 {
+            margin: 0;
+            font-family: "Noto Serif TC", serif;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        .cart-close-btn {
+            background: #f0f0f0;
+            border: none;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: #555;
+        }
+        .cart-close-btn:hover { background: #ddd; }
+        .cart-handle {
+            width: 40px; height: 4px;
+            background: #ddd; border-radius: 2px;
+            margin: 0 auto 14px;
+        }
+        @media (min-width: 600px) {
+            .cart-overlay { align-items: center; }
+            .cart-dialog {
+                width: 480px;
+                max-height: 80vh;
+                border-radius: 14px;
+                transform: scale(0.96) translateY(8px);
+            }
+            .cart-overlay.open .cart-dialog { transform: scale(1) translateY(0); }
+            .cart-handle { display: none; }
         }
         .cart-item {
             display: flex;
@@ -529,41 +591,6 @@
         <div class="loading-msg" style="grid-column:1/-1">載入商品中...</div>
     </div>
 
-    <section class="cart-section">
-        <h2>🛒 您的購物車</h2>
-        <div id="cartItems">
-            <p style="text-align: center; color: #999;">購物車目前是空的</p>
-        </div>
-
-        <hr>
-
-        <div style="margin-top: 20px;">
-            <label><strong>選擇付款方式：</strong></label>
-            <select id="paymentMethod" onchange="calculateTotal()">
-                <option value="transfer">網路轉帳 (玉山銀行)</option>
-                <option value="cod">貨到付款 (需加收 $30 手續費)</option>
-            </select>
-        </div>
-
-        <div class="summary-row">
-            <span>商品小計</span>
-            <span id="subtotalDisplay">$0</span>
-        </div>
-        <div class="summary-row">
-            <span>運費 (滿$1000免運)</span>
-            <span id="shippingDisplay">$0</span>
-        </div>
-        <div class="summary-row" id="feeRow" style="display: none; color: #666;">
-            <span>物流手續費</span>
-            <span>+$30</span>
-        </div>
-        <div class="summary-row total-row">
-            <span>總金額</span>
-            <span id="totalDisplay">$0</span>
-        </div>
-
-        <button class="btn-checkout" onclick="checkout()">📋 複製訂單並前往 Line 聯絡</button>
-    </section>
 
     <section class="info-section" id="info">
         <h3>📦 訂購與保存須知</h3>
@@ -596,6 +623,33 @@
         </iframe>
     </section>
 
+</div>
+
+<!-- Cart Dialog -->
+<div class="cart-overlay" id="cartOverlay" onclick="handleOverlayClick(event)">
+    <div class="cart-dialog">
+        <div class="cart-handle"></div>
+        <div class="cart-dialog-header">
+            <h3>🛒 您的購物車</h3>
+            <button class="cart-close-btn" onclick="closeCart()">✕</button>
+        </div>
+        <div id="cartItems">
+            <p style="text-align: center; color: #999;">購物車目前是空的</p>
+        </div>
+        <hr style="margin: 16px 0;">
+        <div>
+            <label><strong>選擇付款方式：</strong></label>
+            <select id="paymentMethod" onchange="calculateTotal()">
+                <option value="transfer">網路轉帳 (玉山銀行)</option>
+                <option value="cod">貨到付款 (需加收 $30 手續費)</option>
+            </select>
+        </div>
+        <div class="summary-row"><span>商品小計</span><span id="subtotalDisplay">$0</span></div>
+        <div class="summary-row"><span>運費 (滿$1000免運)</span><span id="shippingDisplay">$0</span></div>
+        <div class="summary-row" id="feeRow" style="display:none;color:#666;"><span>物流手續費</span><span>+$30</span></div>
+        <div class="summary-row total-row"><span>總金額</span><span id="totalDisplay">$0</span></div>
+        <button class="btn-checkout" onclick="checkout()">📋 複製訂單並前往 Line 聯絡</button>
+    </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -683,8 +737,20 @@
         `).join('');
     }
 
-    function scrollToCart() {
-        document.querySelector('.cart-section').scrollIntoView({ behavior: 'smooth' });
+    function scrollToCart() { openCart(); }
+
+    function openCart() {
+        document.getElementById('cartOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeCart() {
+        document.getElementById('cartOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    function handleOverlayClick(e) {
+        if (e.target === document.getElementById('cartOverlay')) closeCart();
     }
 
     function updateCartBadge() {
