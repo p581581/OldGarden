@@ -426,7 +426,7 @@
         <!-- 付款方式 -->
         <div class="banner-card">
             <h3>付款方式管理</h3>
-            <div id="paymentMethodList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+            <div id="paymentMethodList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;max-height:320px;overflow-y:auto;padding-right:4px;"></div>
             <button class="btn" style="background:#f0e8d8;color:var(--primary-color);border:1px dashed var(--primary-color);" onclick="addPaymentMethodRow()">+ 新增付款方式</button>
             <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
                 <button class="btn btn-primary" onclick="savePaymentMethods()">儲存</button>
