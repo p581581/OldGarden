@@ -206,11 +206,64 @@
         .btn-checkout:hover { background-color: #435525; }
 
         footer {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 0.8rem;
+            background: #2c1a0e;
+            color: #ccc;
+            padding: 36px 20px 20px;
             margin-top: 40px;
+        }
+        .footer-inner {
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .footer-social {
+            display: flex;
+            gap: 16px;
+        }
+        .footer-social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .footer-social a:hover { background: rgba(255,255,255,0.25); }
+        .footer-social svg { width: 22px; height: 22px; fill: currentColor; }
+        .footer-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px 20px;
+        }
+        .footer-nav a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 4px 0;
+            border-bottom: 1px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .footer-nav a:hover { color: #fff; border-bottom-color: #fff; }
+        .footer-copy {
+            font-size: 0.78rem;
+            color: #888;
+            text-align: center;
+        }
+        .footer-copy a { color: #666; text-decoration: none; }
+        .footer-copy a:hover { color: #aaa; }
+        .footer-divider {
+            width: 100%;
+            max-width: 400px;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
         }
 
         select, input {
@@ -238,7 +291,7 @@
 
 <div class="container">
 
-    <section class="features">
+    <section class="features" id="about">
         <h2>關於老園丁</h2>
         <div class="tag-group">
             <span>🥖 全素無蛋奶</span>
@@ -294,7 +347,7 @@
         <button class="btn-checkout" onclick="checkout()">📋 複製訂單並前往 Line 聯絡</button>
     </section>
 
-    <section class="info-section">
+    <section class="info-section" id="info">
         <h3>📦 訂購與保存須知</h3>
         <p><strong>出貨時間：</strong>每週一至四（常溫配送，連假不出貨）。<br><strong>出窯時間：</strong>上午 10 點。</p>
 
@@ -304,15 +357,21 @@
             <li>冷凍可放一個月（取出後無需退冰，外鍋加水蒸，或噴水進烤箱）</li>
         </ul>
 
-        <p><strong>匯款資訊 (網路轉帳)：</strong><br>
+        <p id="payment"><strong>匯款資訊 (網路轉帳)：</strong><br>
         808 玉山銀行 斗六分行<br>
         帳號：0392976033302<br>
         戶名：楊玲琴<br>
         <small>*匯款後請告知訂購人姓名與末五碼</small></p>
 
-        <p><strong>聯絡我們：</strong><br>
+        <p id="contact"><strong>聯絡我們：</strong><br>
         電話：0970-567 500<br>
-        地址：雲林縣斗南鎮阿丹里阿丹1-20號</p>
+        地址：<a href="https://maps.app.goo.gl/jeSy8iMzBLLLnuSx9" target="_blank" rel="noopener" style="color:var(--primary-color);">雲林縣斗南鎮阿丹里阿丹1-20號</a></p>
+        <iframe
+            src="https://maps.google.com/maps?q=23.6535048,120.5120626&t=&z=17&ie=UTF8&iwloc=&output=embed"
+            width="100%" height="220"
+            style="border:0;border-radius:8px;margin-top:10px;display:block;"
+            allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
     </section>
 
 </div>
@@ -320,7 +379,27 @@
 <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到頂部">↑</button>
 
 <footer>
-    <p>© 老園丁窯烤麵包 Application &nbsp;·&nbsp; <a href="/login.html" style="color: #bbb; text-decoration: none;">管理員入口</a></p>
+    <div class="footer-inner">
+        <div class="footer-social">
+            <a href="https://www.facebook.com/oldgardenerbread" target="_blank" rel="noopener" title="Facebook">
+                <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/old_gardener40534" target="_blank" rel="noopener" title="Instagram">
+                <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </a>
+            <a href="https://line.me/R/ti/p/@jfc3217k" target="_blank" rel="noopener" title="官方 LINE">
+                <svg viewBox="0 0 24 24"><path d="M21 11.5c0-4.08-4.03-7.4-9-7.4S3 7.42 3 11.5c0 3.66 3.21 6.73 7.54 7.3.29.06.69.2.79.44.09.23.06.58.03.81l-.13.77c-.04.23-.18.9.79.49s5.22-3.09 7.12-5.29c1.31-1.46 1.86-2.93 1.86-4.52z"/><path fill="#2c1a0e" d="M9.5 9.75h-.75a.25.25 0 0 0-.25.25v3.5c0 .14.11.25.25.25h.75c.14 0 .25-.11.25-.25v-3.5a.25.25 0 0 0-.25-.25zm5.25 0h-.75a.25.25 0 0 0-.25.25v2.08l-1.6-2.22a.26.26 0 0 0-.04-.05h-.81a.25.25 0 0 0-.25.25v3.5c0 .14.11.25.25.25h.75c.14 0 .25-.11.25-.25v-2.08l1.61 2.22.04.05h.8c.14 0 .25-.11.25-.25V10a.25.25 0 0 0-.25-.25z"/></svg>
+            </a>
+        </div>
+        <nav class="footer-nav">
+            <a href="#about">關於我們</a>
+            <a href="#contact">聯絡我們</a>
+            <a href="#payment">匯款資訊</a>
+            <a href="#info">訂購須知</a>
+        </nav>
+        <div class="footer-divider"></div>
+        <p class="footer-copy">© 老園丁窯烤麵包 Application &nbsp;·&nbsp; <a href="/login.html">管理員入口</a></p>
+    </div>
 </footer>
 
 <script>
