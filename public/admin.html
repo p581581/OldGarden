@@ -374,24 +374,28 @@
 </header>
 
 <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('products')">商品管理</button>
+    <button class="tab-btn active" onclick="switchTab('banner')">橫幅管理</button>
+    <button class="tab-btn" onclick="switchTab('products')">商品管理</button>
     <button class="tab-btn" onclick="switchTab('stats')">統計報表</button>
 </div>
 
-<!-- 商品管理 Tab -->
-<div id="tab-products" class="tab-panel active">
+<!-- Banner Tab -->
+<div id="tab-banner" class="tab-panel active">
     <div class="container">
-
-        <!-- Banner 管理 -->
         <div class="banner-card">
             <h3>橫幅 Banner（16:9）</h3>
             <div class="banner-preview" id="bannerPreview">尚未設定 Banner</div>
-            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px;">
                 <input type="file" accept="image/*" id="bannerFileInput" onchange="uploadBanner(this)" style="flex:1;min-width:0;font-size:0.9rem;">
                 <div id="bannerProgress" style="font-size:0.85rem;color:#666;"></div>
             </div>
         </div>
+    </div>
+</div>
 
+<!-- 商品管理 Tab -->
+<div id="tab-products" class="tab-panel">
+    <div class="container">
         <div class="toolbar" id="toolbar">
             <h2 style="margin:0">商品列表</h2>
             <input class="search-input" type="text" id="searchInput" placeholder="搜尋商品名稱..." oninput="searchProducts()">
@@ -484,6 +488,7 @@
         document.getElementById(`tab-${name}`).classList.add('active');
         event.currentTarget.classList.add('active');
         if (name === 'stats') initStats();
+        if (name === 'banner') loadBanner();
     }
 
     // ── Toast ───────────────────────────────────────────────
