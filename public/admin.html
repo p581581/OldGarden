@@ -391,6 +391,7 @@
                     </div>
                 </div>
 
+                <input type="hidden" id="imagePath-${p.id}" value="${p.imagePath || ''}">
                 <button class="btn btn-save" onclick="saveProduct(${p.id})">儲存變更</button>
             </div>
         `).join('');
@@ -426,6 +427,7 @@
             if (!saveRes.ok) throw new Error('Save failed');
 
             document.getElementById(`preview-${productId}`).innerHTML = `<img src="${url}" alt="商品圖片">`;
+            document.getElementById(`imagePath-${productId}`).value = url;
             const product = products.find(p => p.id === productId);
             if (product) product.imagePath = url;
 
@@ -446,9 +448,8 @@
 
         if (!name) { showToast('商品名稱不可為空。', 'error'); return; }
 
-        // 保留已上傳的 Blob 圖片路徑
-        const existing = products.find(p => p.id === productId);
-        const imagePath = existing ? (existing.imagePath || '') : '';
+        // 從 hidden input 讀取，確保上傳後的路徑不遺失
+        const imagePath = document.getElementById(`imagePath-${productId}`)?.value || '';
 
         try {
             const res = await fetch(`/api/products/${productId}`, {
