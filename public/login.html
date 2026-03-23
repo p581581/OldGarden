@@ -5,21 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>老園丁窯烤麵包 - 管理員登入</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌻</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #8B4513;
-            --accent-color: #556B2F;
-            --bg-color: #FDF5E6;
+            --primary: #8B4513;
+            --primary-dark: #6b340f;
+            --accent: #556B2F;
+            --bg: #fdf6ec;
             --white: #fff;
+            --text: #3a2a1a;
+            --muted: #a08878;
         }
-        *, *::before, *::after { box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
-            margin: 0;
+            font-family: "Noto Serif TC", "Microsoft JhengHei", serif;
             display: flex;
             height: 100vh;
             overflow: hidden;
+            background: var(--bg);
         }
+
         /* ── 左側 Banner ── */
         .banner-panel {
             flex: 1;
@@ -37,95 +44,168 @@
         .banner-panel-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0.35));
+            background: linear-gradient(135deg, rgba(0,0,0,0.08) 0%, rgba(44,26,14,0.55) 100%);
         }
+        .banner-brand {
+            position: absolute;
+            bottom: 48px;
+            left: 44px;
+            color: rgba(255,255,255,0.92);
+        }
+        .banner-brand .logo { font-size: 2.4rem; line-height: 1; margin-bottom: 10px; }
+        .banner-brand h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+        .banner-brand p {
+            font-size: 0.85rem;
+            opacity: 0.75;
+            letter-spacing: 0.04em;
+        }
+
         /* ── 右側登入 ── */
         .login-panel {
-            width: 400px;
+            width: 420px;
             flex-shrink: 0;
-            background: var(--bg-color);
+            background: var(--bg);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px 36px;
+            padding: 48px 44px;
             overflow-y: auto;
+            position: relative;
         }
-        .login-box {
-            width: 100%;
-            max-width: 320px;
+        .login-panel::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 10%; bottom: 10%;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, #e0cbb8, transparent);
         }
-        .login-box h1 {
+
+        .login-box { width: 100%; max-width: 300px; }
+
+        .login-logo {
             text-align: center;
-            color: var(--primary-color);
-            margin: 0 0 6px;
-            font-size: 1.4rem;
+            margin-bottom: 32px;
         }
-        .login-box p {
-            text-align: center;
-            color: #888;
-            margin: 0 0 28px;
-            font-size: 0.9rem;
+        .login-logo .emoji { font-size: 2.8rem; display: block; margin-bottom: 10px; }
+        .login-logo h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.06em;
+            margin-bottom: 4px;
         }
-        .form-group { margin-bottom: 16px; }
+        .login-logo span {
+            font-size: 0.8rem;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0cbb8;
+        }
+        .divider span { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+
+        .form-group { margin-bottom: 18px; }
         .form-group label {
             display: block;
-            font-weight: bold;
-            font-size: 0.9rem;
-            color: #555;
-            margin-bottom: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--muted);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 7px;
         }
         .form-group input {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
+            padding: 11px 14px;
+            border: 1.5px solid #e0cbb8;
+            border-radius: 8px;
+            font-size: 0.95rem;
             font-family: inherit;
+            color: var(--text);
+            background: var(--white);
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
+        .form-group input::placeholder { color: #c8b8a8; }
         .form-group input:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(139,69,19,0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139,69,19,0.1);
         }
+
         .btn-login {
             width: 100%;
-            padding: 12px;
-            background-color: var(--primary-color);
+            padding: 13px;
+            background: var(--primary);
             color: var(--white);
             border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
             font-family: inherit;
-            margin-top: 8px;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: background 0.2s, transform 0.1s;
         }
-        .btn-login:hover { background-color: #6d360e; }
-        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-login:hover { background: var(--primary-dark); }
+        .btn-login:active { transform: scale(0.98); }
+        .btn-login:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
         .error-msg {
-            color: #d32f2f;
-            font-size: 0.9rem;
-            text-align: center;
-            margin-top: 12px;
             display: none;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background: #fff0f0;
+            border: 1px solid #fcc;
+            border-radius: 7px;
+            color: #c62828;
+            font-size: 0.85rem;
+            text-align: center;
         }
+
         .back-link {
             display: block;
             text-align: center;
-            margin-top: 20px;
-            color: var(--accent-color);
-            font-size: 0.85rem;
+            margin-top: 24px;
+            color: var(--muted);
+            font-size: 0.82rem;
             text-decoration: none;
+            transition: color 0.2s;
         }
-        .back-link:hover { text-decoration: underline; }
-        /* ── 手機版：隱藏 banner，登入區全寬置中 ── */
+        .back-link:hover { color: var(--accent); }
+
+        .login-footer {
+            position: absolute;
+            bottom: 24px;
+            font-size: 0.72rem;
+            color: #c8b8a8;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── 手機版 ── */
         @media (max-width: 700px) {
             .banner-panel { display: none; }
             .login-panel {
                 width: 100%;
-                justify-content: center;
-                align-items: center;
+                padding: 40px 28px;
             }
+            .login-panel::before { display: none; }
         }
     </style>
 </head>
@@ -133,12 +213,22 @@
 
 <div class="banner-panel" id="bannerPanel">
     <div class="banner-panel-overlay"></div>
+    <div class="banner-brand">
+        <div class="logo">🌻</div>
+        <h2>老園丁窯烤麵包</h2>
+        <p>Old Gardener Artisan Bread</p>
+    </div>
 </div>
 
 <div class="login-panel">
     <div class="login-box">
-        <h1>🌻 老園丁窯烤麵包</h1>
-        <p>管理員登入</p>
+        <div class="login-logo">
+            <span class="emoji">🌻</span>
+            <h1>老園丁窯烤麵包</h1>
+            <span>後台管理系統</span>
+        </div>
+
+        <div class="divider"><span>管理員登入</span></div>
 
         <div class="form-group">
             <label for="username">帳號</label>
@@ -154,6 +244,7 @@
 
         <a href="/" class="back-link">← 回到訂購頁面</a>
     </div>
+    <p class="login-footer">© 老園丁窯烤麵包</p>
 </div>
 
 <script>
