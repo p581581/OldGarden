@@ -7,10 +7,18 @@ const { Redis } = require('@upstash/redis');
 const app = express();
 app.use(express.json());
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
-});
+// 延遲初始化，避免環境變數未設定時在模組載入時就崩潰
+let _redis = null;
+function getRedis() {
+  if (_redis) return _redis;
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) {
+    throw new Error('請在環境變數中設定 UPSTASH_REDIS_REST_URL 與 UPSTASH_REDIS_REST_TOKEN');
+  }
+  _redis = new Redis({ url, token });
+  return _redis;
+}
 
 const PRODUCTS_KEY = 'bakery_products';
 const LOGS_KEY = 'order_logs';
@@ -62,23 +70,23 @@ function adminAuth(req, res, next) {
 // ── Redis 讀寫 products ──────────────────────────────────────
 async function readProducts() {
   try {
-    return await redis.get(PRODUCTS_KEY);
+    return await getRedis().get(PRODUCTS_KEY);
   } catch { return null; }
 }
 
 async function writeProducts(products) {
-  await redis.set(PRODUCTS_KEY, products);
+  await getRedis().set(PRODUCTS_KEY, products);
 }
 
 // ── Redis 讀寫 logs ──────────────────────────────────────────
 async function readLogs() {
   try {
-    return (await redis.get(LOGS_KEY)) || [];
+    return (await getRedis().get(LOGS_KEY)) || [];
   } catch { return []; }
 }
 
 async function writeLogs(logs) {
-  await redis.set(LOGS_KEY, logs);
+  await getRedis().set(LOGS_KEY, logs);
 }
 
 // ── POST /api/login ──────────────────────────────────────────
