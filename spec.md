@@ -13,11 +13,19 @@
 ## 2. 儲存架構與資料格式 (Storage & Schema)
 
 ### A. 儲存服務 (Vercel Services)
-- **Upstash Redis**（透過 Vercel Marketplace 安裝）:
-    1. **Products Metadata**: 以 key `bakery_products` 儲存所有商品資料（強一致性，無快取延遲）。
-    2. **Order Logs**: 以 key `order_logs` 儲存「複製按鈕」觸發的訂單統計日誌。
+- **Upstash Redis**（透過 Vercel Marketplace 安裝）。環境變數相容兩種命名：
+  - `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`
+  - `KV_REST_API_URL` + `KV_REST_API_TOKEN`（舊版 Vercel KV 命名）
+
+  | Redis Key | 用途 | 狀態 |
+  |---|---|---|
+  | `bakery_products` | 所有商品資料 | 已實作 |
+  | `order_logs` | 訂單統計日誌 | 已實作 |
+  | `bakery_banner` | Banner 圖片 URL | 已實作 |
+  | `bakery_settings` | 全站設定（免運/付款/關於我們） | **待實作** |
+
 - **Vercel Blob**:
-    1. **Image Files**: 儲存實體圖片檔案（單檔上限 5MB）。
+    1. **Image Files**: 儲存實體圖片檔案，路徑格式 `images/{timestamp}-{filename}`，單檔上限 5MB，存取權限 `public`。
 - ~~**Vercel KV**~~: 已下架。
 - ~~**Blob JSON 方案**~~: 改用前曾嘗試以 `products.json` / `logs.json` 儲存於 Blob，因 eventually consistent 有時間差問題而棄用。
 
@@ -35,63 +43,95 @@
 
 ## 3. 認證與管理員系統 (Auth & Admin)
 - **環境變數**: 於 Vercel 設定中預設 `ADMIN_USER` 與 `ADMIN_PASS`。
+- **Token 機制**: 自製 HMAC-SHA256 簽章（非 JWT）。格式為 `base64url(payload).hex_sig`，payload 含 `{ user, exp }`。以 `ADMIN_PASS` 作為 HMAC secret，有效期 **72 小時**。
 - **登入頁面 (Login Page)**:
     - 管理員需輸入帳密進行驗證。
-    - **驗證機制**: 驗證成功後核發 Token，有效期為 **3 天 (72 小時)**。
     - 前端需將 Token 存於 `localStorage`，進入 `admin.html` 時自動檢查。
     - 未登入或 Token 過期者應自動導回登入頁。
+- **受保護 API**: 請求需帶 `Authorization: Bearer <token>` Header，由 `adminAuth` middleware 驗證。
 
 ---
 
 ## 4. API 規格定義 (Express /api/index.js)
 
+> 權限標示：🔓 公開 / 🔒 需 `Authorization: Bearer <token>`
 
-### 1. 產品管理 API (Product API)
-負責所有麵包品項的 CRUD 操作。資料儲存在 Upstash Redis 的 `bakery_products` key 中。
+---
 
-* **GET `/api/products`**
-    * **描述**: 取得所有產品清單。
-    * **邏輯**: 若 Redis 中 `bakery_products` 為空，需自動初始化 (Seed) 原始 5 款麵包資料。
-* **POST `/api/products`**
-    * **描述**: 新增或更新產品（包含上傳圖片至 Blob 並更新 `products.json`）。
-    * **權限**: 需驗證管理員身分。
-* **PUT `/api/products/:id`**
-    * **描述**: 更新指定 ID 的產品欄位（如價格、描述、重量）。
-    * **權限**: 需驗證管理員身分。
-* **DELETE `/api/products/:id`**
-    * **描述**: 刪除產品，並同步移除 Vercel Blob 中關聯的圖片（`imagePath`）。
-    * **邏輯**: 先寫回 `products.json`，再刪除圖片；圖片刪除失敗不阻斷流程，回傳 `imageDeleted: false` 作為警告。
-    * **權限**: 需驗證管理員身分。
+### 1. 登入驗證 API
 
-### 2. 圖片處理 API (Image & Upload API)
-支援產品圖片的上傳與管理。
+| 方法 | 路徑 | 權限 | 狀態 |
+|---|---|---|---|
+| POST | `/api/login` | 🔓 | 已實作 |
 
-* **POST `/api/upload`**
-    * **描述**: 接受 Multipart 圖片上傳。
-    * **限制**: 檔案大小上限 5 MB。
-    * **儲存**: 使用 `@vercel/blob` 儲存並回傳公開的圖片網址。
-* **GET `/api/images/:key`**
-    * **描述**: 提供圖片讀取代理（可選，通常直接使用 Blob URL）。
+* **POST `/api/login`**
+    * **Body**: `{ user, pass }`
+    * **成功回應**: `{ token }` — HMAC-SHA256 簽章 Token，有效 72 小時。
+    * **失敗回應**: `401 { error: '帳號或密碼錯誤' }`
 
-### 3. 統計數據管理 API (stats API)
-統計報表數據。
-- **POST `/api/stats/track`**: **數據採集**。每當使用者點擊前端「複製按鈕」時呼叫，紀錄：日期、品項、數量、金額。
-- **GET `/api/stats`**: 取得統計報表數據，需支援日期區間篩選。
+---
 
-### 4. 登入驗證 API
-登入驗證機制。
-- **POST `/api/login`**: 比對環境變數，核發 3 天效期的 Token。
+### 2. 產品管理 API
 
-### 5. 訂單設置 API (Settings API)
-管理免運規則、付款方式、素材內容等全站設定。資料儲存於 Upstash Redis 的 `bakery_settings` key。
+| 方法 | 路徑 | 權限 | 狀態 |
+|---|---|---|---|
+| GET | `/api/products` | 🔓 | 已實作 |
+| POST | `/api/products` | 🔒 | 已實作 |
+| PUT | `/api/products/:id` | 🔒 | 已實作 |
+| DELETE | `/api/products/:id` | 🔒 | 已實作 |
 
-* **GET `/api/settings`**
-    * **描述**: 取得全站設定。
-    * **邏輯**: 若 Redis 中 `bakery_settings` 為空，回傳預設值（見下方 Schema）。
-    * **權限**: 公開（前端 index.html 需讀取）。
-* **PUT `/api/settings`**
-    * **描述**: 更新全站設定（整筆覆寫）。
-    * **權限**: 需驗證管理員身分。
+* **GET `/api/products`**: 回傳所有產品陣列。若 `bakery_products` 為空自動 Seed 5 筆初始資料。
+* **POST `/api/products`**: 新增商品。必填 `name`、`price`；選填 `weight`、`desc`、`url`、`imagePath`。`id` 自動遞增（現有最大 id + 1）。回傳 `201` + 新商品物件。
+* **PUT `/api/products/:id`**: 部分更新指定商品欄位（`{ ...existing, ...body, id }` 合併）。找不到回傳 `404`。
+* **DELETE `/api/products/:id`**: 刪除商品並呼叫 `del()` 移除 Blob 圖片（`imagePath`）。圖片刪除失敗不阻斷，回傳 `{ success, deleted, imageDeleted }`。
+
+---
+
+### 3. 圖片上傳 API
+
+| 方法 | 路徑 | 權限 | 狀態 |
+|---|---|---|---|
+| POST | `/api/upload` | 🔒 | 已實作 |
+| GET | `/api/images/:key` | 🔓 | 已實作 |
+
+* **POST `/api/upload`**: `multipart/form-data`，欄位名 `image`。上限 5MB，僅接受 `image/*`。存至 Vercel Blob 路徑 `images/{timestamp}-{filename}`，`access: public`。回傳 `{ url }`。
+* **GET `/api/images/:key`**: 301 永久重導向至 `https://blob.vercel-storage.com/:key`。
+
+---
+
+### 4. Banner API
+
+| 方法 | 路徑 | 權限 | 狀態 |
+|---|---|---|---|
+| GET | `/api/banner` | 🔓 | 已實作 |
+| PUT | `/api/banner` | 🔒 | 已實作 |
+
+* **GET `/api/banner`**: 回傳 `{ url }`，Redis key `bakery_banner`，無值時回傳空字串。
+* **PUT `/api/banner`**: Body `{ url }`，覆寫 `bakery_banner`，回傳 `{ url }`。
+
+---
+
+### 5. 統計數據 API
+
+| 方法 | 路徑 | 權限 | 狀態 |
+|---|---|---|---|
+| POST | `/api/stats/track` | 🔓 | 已實作 |
+| GET | `/api/stats` | 🔒 | 已實作 |
+
+* **POST `/api/stats/track`**: Body `{ items: [{ name, qty, price, amount }], total }`。`items` 必須為陣列，否則回傳 `400`。自動附加 `date`（`YYYY-MM-DD`）與 `timestamp`，append 至 `order_logs`。
+* **GET `/api/stats`**: Query 參數：`startDate`、`endDate`（`YYYY-MM-DD`）、`product`（商品名稱）。回傳符合條件的日誌陣列。
+
+---
+
+### 6. 訂單設置 API *(待實作)*
+
+| 方法 | 路徑 | 權限 | 狀態 |
+|---|---|---|---|
+| GET | `/api/settings` | 🔓 | **待實作** |
+| PUT | `/api/settings` | 🔒 | **待實作** |
+
+* **GET `/api/settings`**: 取得全站設定。若 `bakery_settings` 為空回傳預設值（見 Schema）。
+* **PUT `/api/settings`**: Body 為完整 settings 物件，整筆覆寫 `bakery_settings`。
 
 #### Settings Schema (`bakery_settings`)
 ```json

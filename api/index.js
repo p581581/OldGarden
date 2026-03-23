@@ -27,7 +27,18 @@ function getRedis() {
 const PRODUCTS_KEY = 'bakery_products';
 const LOGS_KEY = 'order_logs';
 const BANNER_KEY = 'bakery_banner';
+const SETTINGS_KEY = 'bakery_settings';
 const TOKEN_EXPIRY = 72 * 60 * 60 * 1000; // 72 小時
+
+const DEFAULT_SETTINGS = {
+  freeShippingThreshold: 1000,
+  shippingFee: 160,
+  paymentMethods: [
+    { id: 'transfer', name: '網路轉帳 (玉山銀行)', feeName: '', fee: 0 },
+    { id: 'cod', name: '貨到付款', feeName: '物流手續費', fee: 30 },
+  ],
+  aboutText: '',
+};
 
 const SEED_DATA = [
   { id: 1, name: '綜合堅果', weight: '320g', price: 100, url: '', imagePath: '', desc: '蔓越莓、葡萄乾、黑芝麻、南瓜子、核桃、腰果' },
@@ -110,6 +121,27 @@ app.put('/api/banner', adminAuth, async (req, res) => {
     const { url } = req.body;
     await getRedis().set(BANNER_KEY, url || '');
     res.json({ url: url || '' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── GET /api/settings ────────────────────────────────────────
+app.get('/api/settings', async (req, res) => {
+  try {
+    const data = await getRedis().get(SETTINGS_KEY);
+    res.json(data ? { ...DEFAULT_SETTINGS, ...data } : { ...DEFAULT_SETTINGS });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── PUT /api/settings ─────────────────────────────────────────
+app.put('/api/settings', adminAuth, async (req, res) => {
+  try {
+    const settings = { ...DEFAULT_SETTINGS, ...req.body };
+    await getRedis().set(SETTINGS_KEY, settings);
+    res.json(settings);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -375,6 +375,7 @@
 
 <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('banner')">素材管理</button>
+    <button class="tab-btn" onclick="switchTab('settings')">訂單設置</button>
     <button class="tab-btn" onclick="switchTab('products')">商品管理</button>
     <button class="tab-btn" onclick="switchTab('stats')">統計報表</button>
 </div>
@@ -396,6 +397,40 @@
             <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
                 <button class="btn btn-primary" onclick="saveAboutText()">儲存</button>
                 <span id="aboutTextStatus" style="font-size:0.85rem;color:#666;"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 訂單設置 Tab -->
+<div id="tab-settings" class="tab-panel">
+    <div class="container">
+        <!-- 免運規則 -->
+        <div class="banner-card">
+            <h3>免運規則</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
+                    免運門檻金額 ($)
+                    <input type="number" id="settingThreshold" min="0" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:0.95rem;">
+                </label>
+                <label style="display:flex;flex-direction:column;gap:4px;font-size:0.9rem;">
+                    運費 ($)
+                    <input type="number" id="settingShippingFee" min="0" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:0.95rem;">
+                </label>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <button class="btn btn-primary" onclick="saveShippingSettings()">儲存</button>
+                <span id="shippingSettingsStatus" style="font-size:0.85rem;color:#666;"></span>
+            </div>
+        </div>
+        <!-- 付款方式 -->
+        <div class="banner-card">
+            <h3>付款方式管理</h3>
+            <div id="paymentMethodList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+            <button class="btn" style="background:#f0e8d8;color:var(--primary-color);border:1px dashed var(--primary-color);" onclick="addPaymentMethodRow()">+ 新增付款方式</button>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+                <button class="btn btn-primary" onclick="savePaymentMethods()">儲存</button>
+                <span id="paymentMethodsStatus" style="font-size:0.85rem;color:#666;"></span>
             </div>
         </div>
     </div>
@@ -975,10 +1010,102 @@
         }
     }
 
+    // ── Settings ─────────────────────────────────────────────
+    let _settings = null;
+
+    async function loadOrderSettings() {
+        try {
+            const res = await fetch('/api/settings');
+            if (res.ok) _settings = await res.json();
+        } catch {}
+        if (!_settings) _settings = {
+            freeShippingThreshold: 1000, shippingFee: 160,
+            paymentMethods: [
+                { id: 'transfer', name: '網路轉帳 (玉山銀行)', feeName: '', fee: 0 },
+                { id: 'cod', name: '貨到付款', feeName: '物流手續費', fee: 30 },
+            ]
+        };
+        document.getElementById('settingThreshold').value = _settings.freeShippingThreshold;
+        document.getElementById('settingShippingFee').value = _settings.shippingFee;
+        renderPaymentMethodList(_settings.paymentMethods);
+    }
+
+    function renderPaymentMethodList(methods) {
+        const container = document.getElementById('paymentMethodList');
+        container.innerHTML = methods.map((m, i) => `
+            <div style="display:grid;grid-template-columns:1fr 2fr 2fr 80px 36px;gap:6px;align-items:center;" data-index="${i}">
+                <input value="${m.id}" placeholder="id" style="padding:6px;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" data-field="id">
+                <input value="${m.name}" placeholder="顯示名稱" style="padding:6px;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" data-field="name">
+                <input value="${m.feeName}" placeholder="手續費名稱" style="padding:6px;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" data-field="feeName">
+                <input type="number" value="${m.fee}" placeholder="手續費" min="0" style="padding:6px;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" data-field="fee">
+                <button onclick="removePaymentMethodRow(${i})" style="background:#fee;border:none;border-radius:6px;cursor:pointer;font-size:1rem;padding:4px 8px;">✕</button>
+            </div>`).join('');
+    }
+
+    function addPaymentMethodRow() {
+        const rows = document.querySelectorAll('#paymentMethodList [data-index]');
+        const methods = collectPaymentMethods();
+        methods.push({ id: '', name: '', feeName: '', fee: 0 });
+        renderPaymentMethodList(methods);
+    }
+
+    function removePaymentMethodRow(index) {
+        const methods = collectPaymentMethods();
+        methods.splice(index, 1);
+        renderPaymentMethodList(methods);
+    }
+
+    function collectPaymentMethods() {
+        return Array.from(document.querySelectorAll('#paymentMethodList [data-index]')).map(row => ({
+            id: row.querySelector('[data-field="id"]').value.trim(),
+            name: row.querySelector('[data-field="name"]').value.trim(),
+            feeName: row.querySelector('[data-field="feeName"]').value.trim(),
+            fee: Number(row.querySelector('[data-field="fee"]').value) || 0,
+        }));
+    }
+
+    async function saveShippingSettings() {
+        const statusEl = document.getElementById('shippingSettingsStatus');
+        statusEl.textContent = '儲存中…';
+        try {
+            const updated = {
+                ..._settings,
+                freeShippingThreshold: Number(document.getElementById('settingThreshold').value) || 0,
+                shippingFee: Number(document.getElementById('settingShippingFee').value) || 0,
+            };
+            const res = await fetch('/api/settings', { method: 'PUT', headers: authHeaders(), body: JSON.stringify(updated) });
+            if (!res.ok) throw new Error();
+            _settings = updated;
+            statusEl.textContent = '✓ 已儲存';
+            showToast('免運規則已更新！');
+        } catch {
+            statusEl.textContent = '儲存失敗，請重試。';
+            showToast('儲存失敗。', 'error');
+        }
+    }
+
+    async function savePaymentMethods() {
+        const statusEl = document.getElementById('paymentMethodsStatus');
+        statusEl.textContent = '儲存中…';
+        try {
+            const methods = collectPaymentMethods();
+            const updated = { ..._settings, paymentMethods: methods };
+            const res = await fetch('/api/settings', { method: 'PUT', headers: authHeaders(), body: JSON.stringify(updated) });
+            if (!res.ok) throw new Error();
+            _settings = updated;
+            statusEl.textContent = '✓ 已儲存';
+            showToast('付款方式已更新！');
+        } catch {
+            statusEl.textContent = '儲存失敗，請重試。';
+            showToast('儲存失敗。', 'error');
+        }
+    }
+
     // ── Init ────────────────────────────────────────────────
     getToken();
     loadBanner();
     loadAboutText();
+    loadOrderSettings();
     loadProducts();
 
     window.addEventListener('scroll', () => {
