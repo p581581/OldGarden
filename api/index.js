@@ -1,14 +1,13 @@
 const express = require('express');
 const crypto = require('crypto');
 const multer = require('multer');
-const { kv } = require('@vercel/kv');
 const { put, del, list } = require('@vercel/blob');
 
 const app = express();
 app.use(express.json());
 
 const PRODUCTS_BLOB_PATH = 'products.json';
-const ORDER_LOGS_KEY = 'order_logs';
+const LOGS_BLOB_PATH = 'logs.json';
 const TOKEN_EXPIRY = 72 * 60 * 60 * 1000; // 72 小時
 
 const SEED_DATA = [
@@ -67,6 +66,25 @@ async function readProducts() {
 
 async function writeProducts(products) {
   await put(PRODUCTS_BLOB_PATH, JSON.stringify(products), {
+    access: 'public',
+    addRandomSuffix: false,
+    contentType: 'application/json',
+  });
+}
+
+// ── Blob 讀寫 logs.json ──────────────────────────────────────
+async function readLogs() {
+  try {
+    const { blobs } = await list({ prefix: LOGS_BLOB_PATH });
+    const blob = blobs.find(b => b.pathname === LOGS_BLOB_PATH);
+    if (!blob) return [];
+    const res = await fetch(`${blob.url}?t=${Date.now()}`);
+    return await res.json();
+  } catch { return []; }
+}
+
+async function writeLogs(logs) {
+  await put(LOGS_BLOB_PATH, JSON.stringify(logs), {
     access: 'public',
     addRandomSuffix: false,
     contentType: 'application/json',
@@ -189,9 +207,9 @@ app.post('/api/stats/track', async (req, res) => {
     if (!Array.isArray(items)) return res.status(400).json({ error: 'items 必須為陣列' });
     const date = new Date().toISOString().slice(0, 10);
     const entry = { date, items, total: total || 0, timestamp: Date.now() };
-    const logs = (await kv.get(ORDER_LOGS_KEY)) || [];
+    const logs = await readLogs();
     logs.push(entry);
-    await kv.set(ORDER_LOGS_KEY, logs);
+    await writeLogs(logs);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -202,7 +220,7 @@ app.post('/api/stats/track', async (req, res) => {
 app.get('/api/stats', adminAuth, async (req, res) => {
   try {
     const { startDate, endDate, product } = req.query;
-    let logs = (await kv.get(ORDER_LOGS_KEY)) || [];
+    let logs = await readLogs();
     if (startDate) logs = logs.filter(l => l.date >= startDate);
     if (endDate) logs = logs.filter(l => l.date <= endDate);
     if (product) {
