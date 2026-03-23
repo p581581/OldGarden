@@ -26,6 +26,7 @@ function getRedis() {
 
 const PRODUCTS_KEY = 'bakery_products';
 const LOGS_KEY = 'order_logs';
+const BANNER_KEY = 'bakery_banner';
 const TOKEN_EXPIRY = 72 * 60 * 60 * 1000; // 72 小時
 
 const SEED_DATA = [
@@ -92,6 +93,27 @@ async function readLogs() {
 async function writeLogs(logs) {
   await getRedis().set(LOGS_KEY, logs);
 }
+
+// ── GET /api/banner ──────────────────────────────────────────
+app.get('/api/banner', async (req, res) => {
+  try {
+    const url = (await getRedis().get(BANNER_KEY)) || '';
+    res.json({ url });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── PUT /api/banner ──────────────────────────────────────────
+app.put('/api/banner', adminAuth, async (req, res) => {
+  try {
+    const { url } = req.body;
+    await getRedis().set(BANNER_KEY, url || '');
+    res.json({ url: url || '' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // ── POST /api/login ──────────────────────────────────────────
 app.post('/api/login', (req, res) => {

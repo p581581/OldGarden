@@ -261,6 +261,30 @@
         .loading { text-align: center; padding: 60px 20px; color: #999; font-size: 1.1rem; }
         .empty-state { text-align: center; padding: 60px 20px; color: #999; }
 
+        /* Banner */
+        .banner-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .banner-card h3 { margin: 0 0 14px; color: var(--primary-color); font-size: 1rem; }
+        .banner-preview {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #f0e8d8;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+        .banner-preview img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+
         /* Scroll to top */
         .scroll-top {
             position: fixed;
@@ -357,6 +381,17 @@
 <!-- 商品管理 Tab -->
 <div id="tab-products" class="tab-panel active">
     <div class="container">
+
+        <!-- Banner 管理 -->
+        <div class="banner-card">
+            <h3>橫幅 Banner（16:9）</h3>
+            <div class="banner-preview" id="bannerPreview">尚未設定 Banner</div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <input type="file" accept="image/*" id="bannerFileInput" onchange="uploadBanner(this)" style="flex:1;min-width:0;font-size:0.9rem;">
+                <div id="bannerProgress" style="font-size:0.85rem;color:#666;"></div>
+            </div>
+        </div>
+
         <div class="toolbar" id="toolbar">
             <h2 style="margin:0">商品列表</h2>
             <input class="search-input" type="text" id="searchInput" placeholder="搜尋商品名稱..." oninput="searchProducts()">
@@ -842,8 +877,59 @@
         });
     }
 
+    // ── Banner ───────────────────────────────────────────────
+    async function loadBanner() {
+        try {
+            const res = await fetch('/api/banner');
+            const { url } = await res.json();
+            if (url) {
+                document.getElementById('bannerPreview').innerHTML = `<img src="${url}" alt="Banner">`;
+            }
+        } catch {}
+    }
+
+    async function uploadBanner(fileInput) {
+        const file = fileInput.files[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('圖片過大，請選擇 5MB 以下的檔案。', 'error');
+            return;
+        }
+        const progressEl = document.getElementById('bannerProgress');
+        progressEl.textContent = '上傳中...';
+        try {
+            const formData = new FormData();
+            formData.append('image', file);
+            const token = getToken();
+            if (!token) return;
+            const uploadRes = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData,
+            });
+            if (!uploadRes.ok) throw new Error('Upload failed');
+            const { url } = await uploadRes.json();
+
+            const saveRes = await fetch('/api/banner', {
+                method: 'PUT',
+                headers: authHeaders(),
+                body: JSON.stringify({ url }),
+            });
+            if (!saveRes.ok) throw new Error('Save failed');
+
+            document.getElementById('bannerPreview').innerHTML = `<img src="${url}" alt="Banner">`;
+            progressEl.textContent = '✓ Banner 已更新';
+            fileInput.value = '';
+            showToast('Banner 更新成功！');
+        } catch {
+            progressEl.textContent = '上傳失敗，請重試。';
+            showToast('Banner 上傳失敗。', 'error');
+        }
+    }
+
     // ── Init ────────────────────────────────────────────────
     getToken();
+    loadBanner();
     loadProducts();
 
     window.addEventListener('scroll', () => {

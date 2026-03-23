@@ -194,6 +194,33 @@
         #about, #info, #contact, #payment {
             scroll-margin-top: 70px;
         }
+
+        .banner {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            background: #2c1a0e;
+            position: relative;
+        }
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+        .banner-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: rgba(255,255,255,0.4);
+            font-size: 1rem;
+            gap: 8px;
+        }
+        .banner-placeholder span:first-child { font-size: 3rem; }
         .info-section h3 { border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; display: inline-block; }
 
         .btn-checkout {
@@ -292,6 +319,13 @@
     <h1>🌻 老園丁窯烤麵包</h1>
     <p>全素．無蛋奶．無油．窯烤麥香</p>
 </header>
+
+<div class="banner" id="banner">
+    <div class="banner-placeholder">
+        <span>🌻</span>
+        <span>老園丁窯烤麵包</span>
+    </div>
+</div>
 
 <div class="container">
 
@@ -568,6 +602,17 @@
         });
     }
 
+    async function loadBanner() {
+        try {
+            const res = await fetch('/api/banner');
+            const { url } = await res.json();
+            if (url) {
+                document.getElementById('banner').innerHTML = `<img src="${url}" alt="老園丁窯烤麵包">`;
+            }
+        } catch {}
+    }
+
+    loadBanner();
     init();
 
     window.addEventListener('scroll', () => {
