@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老園丁窯烤麵包 - 商品管理</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌻</text></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #8B4513;
+            --accent-color: #556B2F;
+            --bg-color: #FDF5E6;
+            --text-color: #333;
+            --white: #fff;
+            --danger: #d32f2f;
+        }
+        body {
+            font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 1rem;
+            text-align: center;
+            position: sticky;
+            top: 0; z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        header h1 { margin: 0; font-size: 1.5rem; }
+        header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
+        .header-links { margin-top: 6px; display: flex; justify-content: center; gap: 16px; }
+        .header-links a, .header-links button {
+            color: var(--white);
+            font-size: 0.85rem;
+            background: none;
+            border: none;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: #f5e8d5;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        .tab-btn {
+            padding: 12px 28px;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #666;
+            font-family: inherit;
+        }
+        .tab-btn.active {
+            background: var(--white);
+            color: var(--primary-color);
+            font-weight: bold;
+            border-bottom: 3px solid var(--primary-color);
+            margin-bottom: -2px;
+        }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* Buttons */
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 0.95rem; font-weight: bold; font-family: inherit; }
+        .btn-primary { background-color: var(--accent-color); color: var(--white); }
+        .btn-primary:hover { background-color: #435525; }
+        .btn-danger { background-color: var(--danger); color: var(--white); }
+        .btn-danger:hover { background-color: #b71c1c; }
+        .btn-save { background-color: var(--primary-color); color: var(--white); }
+        .btn-save:hover { background-color: #6d360e; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Product card */
+        .product-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .product-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .product-card-header h3 { margin: 0; color: var(--primary-color); }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .form-row.full { grid-template-columns: 1fr; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; color: #555; }
+        .form-group input, .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(139,69,19,0.15);
+        }
+        .form-group textarea { resize: vertical; min-height: 60px; }
+
+        .image-section { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px; }
+        .image-preview {
+            width: 120px; height: 120px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #999; font-size: 0.85rem; text-align: center;
+            overflow: hidden; flex-shrink: 0; background: #f9f9f9;
+        }
+        .image-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .image-controls { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .image-controls input[type="file"] { font-size: 0.9rem; }
+        .upload-progress { font-size: 0.85rem; color: #666; }
+
+        .loading { text-align: center; padding: 60px 20px; color: #999; font-size: 1.1rem; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 20px; right: 20px;
+            padding: 12px 24px; border-radius: 8px;
+            color: var(--white); font-weight: bold;
+            z-index: 1000; opacity: 0; transition: opacity 0.3s; max-width: 350px;
+        }
+        .toast.show { opacity: 1; }
+        .toast.success { background-color: var(--accent-color); }
+        .toast.error { background-color: var(--danger); }
+
+        /* Stats */
+        .stats-filters {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        .stats-filters .form-group { flex: 1; min-width: 140px; }
+        .stats-filters label { font-weight: bold; font-size: 0.9rem; color: #555; display: block; margin-bottom: 4px; }
+        .stats-filters input, .stats-filters select {
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .chart-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .chart-card h3 { margin: 0 0 16px; color: var(--primary-color); font-size: 1rem; }
+
+        @media (max-width: 700px) {
+            .form-row { grid-template-columns: 1fr; }
+            .image-section { flex-direction: column; }
+            .image-preview { width: 100%; height: 150px; }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🌻 老園丁窯烤麵包 - 後台管理</h1>
+    <div class="header-links">
+        <a href="/">← 回到訂購頁面</a>
+        <button onclick="logout()">登出</button>
+    </div>
+</header>
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('products')">商品管理</button>
+    <button class="tab-btn" onclick="switchTab('stats')">統計報表</button>
+</div>
+
+<!-- 商品管理 Tab -->
+<div id="tab-products" class="tab-panel active">
+    <div class="container">
+        <div class="toolbar">
+            <h2>商品列表</h2>
+            <button class="btn btn-primary" onclick="addProduct()">+ 新增商品</button>
+        </div>
+        <div id="productList">
+            <div class="loading">載入中...</div>
+        </div>
+    </div>
+</div>
+
+<!-- 統計報表 Tab -->
+<div id="tab-stats" class="tab-panel">
+    <div class="container">
+        <h2>訂單統計報表</h2>
+        <div class="stats-filters">
+            <div class="form-group">
+                <label>開始日期</label>
+                <input type="date" id="statsStart">
+            </div>
+            <div class="form-group">
+                <label>結束日期</label>
+                <input type="date" id="statsEnd">
+            </div>
+            <div class="form-group">
+                <label>商品類別</label>
+                <select id="statsProduct">
+                    <option value="">全部商品</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 0;">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" onclick="loadStats()">套用篩選</button>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>各商品訂購佔比</h3>
+                <canvas id="pieChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>訂購趨勢</h3>
+                <canvas id="lineChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    let products = [];
+    let pieChartInstance = null;
+    let lineChartInstance = null;
+
+    // ── Auth ────────────────────────────────────────────────
+    function getToken() {
+        const token = localStorage.getItem('admin_token');
+        const exp = localStorage.getItem('admin_token_exp');
+        if (!token || !exp || Date.now() > parseInt(exp, 10)) {
+            window.location.href = '/login.html';
+            return null;
+        }
+        return token;
+    }
+
+    function authHeaders() {
+        const token = getToken();
+        if (!token) return {};
+        return {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        };
+    }
+
+    function logout() {
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_token_exp');
+        window.location.href = '/login.html';
+    }
+
+    // ── Tabs ────────────────────────────────────────────────
+    function switchTab(name) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`tab-${name}`).classList.add('active');
+        event.currentTarget.classList.add('active');
+        if (name === 'stats') initStats();
+    }
+
+    // ── Toast ───────────────────────────────────────────────
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // ── Products ────────────────────────────────────────────
+    async function loadProducts() {
+        try {
+            const res = await fetch('/api/products');
+            products = await res.json();
+            renderProducts();
+        } catch {
+            document.getElementById('productList').innerHTML =
+                '<div class="empty-state">無法載入商品資料，請重新整理頁面。</div>';
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function getPreviewHtml(p) {
+        if (p.imagePath) return `<img src="${p.imagePath}" alt="${p.name}">`;
+        if (p.url) return `<img src="${p.url}" alt="${p.name}">`;
+        return '尚無圖片';
+    }
+
+    function renderProducts() {
+        const container = document.getElementById('productList');
+        if (products.length === 0) {
+            container.innerHTML = '<div class="empty-state">尚無商品，請點擊「新增商品」開始。</div>';
+            return;
+        }
+        container.innerHTML = products.map(p => `
+            <div class="product-card" id="card-${p.id}">
+                <div class="product-card-header">
+                    <h3>商品 #${p.id}：${escapeHtml(p.name)}</h3>
+                    <button class="btn btn-danger" onclick="deleteProduct(${p.id})">刪除</button>
+                </div>
+
+                <div class="image-section">
+                    <div class="image-preview" id="preview-${p.id}">${getPreviewHtml(p)}</div>
+                    <div class="image-controls">
+                        <label>上傳圖片至 Blob（最大 5MB）</label>
+                        <input type="file" accept="image/*" onchange="uploadImage(${p.id}, this)">
+                        <div class="upload-progress" id="progress-${p.id}"></div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>商品名稱</label>
+                        <input type="text" id="name-${p.id}" value="${escapeHtml(p.name)}">
+                    </div>
+                    <div class="form-group">
+                        <label>重量</label>
+                        <input type="text" id="weight-${p.id}" value="${escapeHtml(p.weight)}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>價格 (NT$)</label>
+                        <input type="number" id="price-${p.id}" value="${p.price}" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>外部圖片網址 (備用)</label>
+                        <input type="text" id="url-${p.id}" value="${escapeHtml(p.url || '')}" placeholder="https://...">
+                    </div>
+                </div>
+
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label>商品描述</label>
+                        <textarea id="desc-${p.id}">${escapeHtml(p.desc)}</textarea>
+                    </div>
+                </div>
+
+                <button class="btn btn-save" onclick="saveProduct(${p.id})">儲存變更</button>
+            </div>
+        `).join('');
+    }
+
+    async function uploadImage(productId, fileInput) {
+        const file = fileInput.files[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('圖片檔案過大，請選擇 5MB 以下的檔案。', 'error');
+            return;
+        }
+        const progressEl = document.getElementById(`progress-${productId}`);
+        progressEl.textContent = '上傳中...';
+        try {
+            const formData = new FormData();
+            formData.append('image', file);
+            const token = getToken();
+            if (!token) return;
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData,
+            });
+            if (!res.ok) throw new Error('Upload failed');
+            const { url } = await res.json();
+
+            const saveRes = await fetch(`/api/products/${productId}`, {
+                method: 'PUT',
+                headers: authHeaders(),
+                body: JSON.stringify({ imagePath: url }),
+            });
+            if (!saveRes.ok) throw new Error('Save failed');
+
+            document.getElementById(`preview-${productId}`).innerHTML = `<img src="${url}" alt="商品圖片">`;
+            const product = products.find(p => p.id === productId);
+            if (product) product.imagePath = url;
+
+            progressEl.textContent = '上傳成功！';
+            showToast('圖片上傳成功！');
+        } catch {
+            progressEl.textContent = '上傳失敗，請重試。';
+            showToast('圖片上傳失敗，請重試。', 'error');
+        }
+    }
+
+    async function saveProduct(productId) {
+        const name = document.getElementById(`name-${productId}`).value.trim();
+        const weight = document.getElementById(`weight-${productId}`).value.trim();
+        const price = document.getElementById(`price-${productId}`).value;
+        const desc = document.getElementById(`desc-${productId}`).value.trim();
+        const url = document.getElementById(`url-${productId}`).value.trim();
+
+        if (!name) { showToast('商品名稱不可為空。', 'error'); return; }
+
+        try {
+            const res = await fetch(`/api/products/${productId}`, {
+                method: 'PUT',
+                headers: authHeaders(),
+                body: JSON.stringify({ name, weight, price: Number(price), desc, url }),
+            });
+            if (!res.ok) throw new Error('Save failed');
+            const updated = await res.json();
+            const idx = products.findIndex(p => p.id === productId);
+            if (idx !== -1) products[idx] = updated;
+            showToast('儲存成功！');
+        } catch {
+            showToast('儲存失敗，請重試。', 'error');
+        }
+    }
+
+    async function addProduct() {
+        try {
+            const res = await fetch('/api/products', {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify({ name: '新商品', weight: '', price: 0, desc: '', url: '', imagePath: '' }),
+            });
+            if (!res.ok) throw new Error('Create failed');
+            const newProduct = await res.json();
+            products.push(newProduct);
+            renderProducts();
+            const card = document.getElementById(`card-${newProduct.id}`);
+            if (card) card.scrollIntoView({ behavior: 'smooth' });
+            showToast('新商品已建立！');
+        } catch {
+            showToast('新增商品失敗，請重試。', 'error');
+        }
+    }
+
+    async function deleteProduct(productId) {
+        const product = products.find(p => p.id === productId);
+        const name = product ? product.name : `#${productId}`;
+        if (!confirm(`確定要刪除「${name}」嗎？此操作無法復原。`)) return;
+        try {
+            const res = await fetch(`/api/products/${productId}`, {
+                method: 'DELETE',
+                headers: authHeaders(),
+            });
+            if (!res.ok) throw new Error('Delete failed');
+            products = products.filter(p => p.id !== productId);
+            renderProducts();
+            showToast('商品已刪除。');
+        } catch {
+            showToast('刪除失敗，請重試。', 'error');
+        }
+    }
+
+    // ── Stats ───────────────────────────────────────────────
+    function getDefaultDates() {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        return {
+            start: start.toISOString().slice(0, 10),
+            end: now.toISOString().slice(0, 10),
+        };
+    }
+
+    function initStats() {
+        const { start, end } = getDefaultDates();
+        const startEl = document.getElementById('statsStart');
+        const endEl = document.getElementById('statsEnd');
+        if (!startEl.value) startEl.value = start;
+        if (!endEl.value) endEl.value = end;
+
+        // 填充商品下拉選單
+        const select = document.getElementById('statsProduct');
+        const existingNames = [...select.options].map(o => o.value);
+        products.forEach(p => {
+            if (!existingNames.includes(p.name)) {
+                const opt = document.createElement('option');
+                opt.value = p.name;
+                opt.textContent = p.name;
+                select.appendChild(opt);
+            }
+        });
+
+        loadStats();
+    }
+
+    async function loadStats() {
+        const startDate = document.getElementById('statsStart').value;
+        const endDate = document.getElementById('statsEnd').value;
+        const product = document.getElementById('statsProduct').value;
+
+        const params = new URLSearchParams();
+        if (startDate) params.set('startDate', startDate);
+        if (endDate) params.set('endDate', endDate);
+        if (product) params.set('product', product);
+
+        try {
+            const res = await fetch(`/api/stats?${params}`, { headers: authHeaders() });
+            if (!res.ok) throw new Error('Failed');
+            const logs = await res.json();
+            renderCharts(logs);
+        } catch {
+            showToast('載入統計資料失敗。', 'error');
+        }
+    }
+
+    function renderCharts(logs) {
+        // 整理資料
+        const pieAgg = {};  // name → total qty
+        const lineAgg = {}; // date → { qty, amount }
+
+        logs.forEach(log => {
+            log.items.forEach(item => {
+                pieAgg[item.name] = (pieAgg[item.name] || 0) + (item.qty || 0);
+            });
+            const totalQty = log.items.reduce((s, i) => s + (i.qty || 0), 0);
+            lineAgg[log.date] = lineAgg[log.date] || { qty: 0, amount: 0 };
+            lineAgg[log.date].qty += totalQty;
+            lineAgg[log.date].amount += log.total || 0;
+        });
+
+        // 圓餅圖
+        const pieLabels = Object.keys(pieAgg);
+        const pieValues = Object.values(pieAgg);
+        const pieColors = ['#8B4513','#556B2F','#DAA520','#CD853F','#6B8E23','#A0522D','#BDB76B'];
+
+        if (pieChartInstance) pieChartInstance.destroy();
+        pieChartInstance = new Chart(document.getElementById('pieChart'), {
+            type: 'pie',
+            data: {
+                labels: pieLabels,
+                datasets: [{ data: pieValues, backgroundColor: pieColors.slice(0, pieLabels.length) }],
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` ${ctx.label}: ${ctx.parsed} 個`,
+                        },
+                    },
+                },
+            },
+        });
+
+        // 趨勢圖
+        const sortedDates = Object.keys(lineAgg).sort();
+        const lineQty = sortedDates.map(d => lineAgg[d].qty);
+        const lineAmount = sortedDates.map(d => lineAgg[d].amount);
+
+        if (lineChartInstance) lineChartInstance.destroy();
+        lineChartInstance = new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: sortedDates,
+                datasets: [
+                    {
+                        label: '訂購數量',
+                        data: lineQty,
+                        borderColor: '#8B4513',
+                        backgroundColor: 'rgba(139,69,19,0.1)',
+                        yAxisID: 'yQty',
+                        tension: 0.3,
+                    },
+                    {
+                        label: '訂購金額',
+                        data: lineAmount,
+                        borderColor: '#556B2F',
+                        backgroundColor: 'rgba(85,107,47,0.1)',
+                        yAxisID: 'yAmount',
+                        tension: 0.3,
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    yQty: { type: 'linear', position: 'left', title: { display: true, text: '數量' } },
+                    yAmount: { type: 'linear', position: 'right', title: { display: true, text: '金額 (NT$)' }, grid: { drawOnChartArea: false } },
+                },
+                plugins: { legend: { position: 'bottom' } },
+            },
+        });
+    }
+
+    // ── Init ────────────────────────────────────────────────
+    getToken(); // 若無 token 會跳轉至 login
+    loadProducts();
+</script>
+
+</body>
+</html>

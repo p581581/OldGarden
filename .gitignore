@@ -1,0 +1,17 @@
+# 環境變數（含敏感資訊，絕對不能上傳）
+.env
+.env.local
+.env.*.local
+
+# Vercel
+.vercel
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
