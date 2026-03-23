@@ -76,7 +76,7 @@
             align-items: center;
             margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 16px;
         }
 
         /* Buttons */
@@ -135,7 +135,7 @@
         }
         .grid-card-img {
             width: 100%;
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 2 / 3;
             background: #f0e8d8;
             display: flex;
             align-items: center;
@@ -185,7 +185,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 2 / 3;
             color: #aaa;
             font-size: 2rem;
             transition: background 0.15s, border-color 0.15s;
@@ -673,9 +673,8 @@
             const idx = products.findIndex(p => p.id === productId);
             if (idx !== -1) products[idx] = updated;
 
-            // 更新 detail toolbar 標題（名稱可能改變）
-            setDetailToolbar(updated);
             showToast('儲存成功！');
+            renderGrid();
         } catch {
             showToast('儲存失敗，請重試。', 'error');
         }
