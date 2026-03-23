@@ -919,7 +919,7 @@
             } catch { }
             const sel = document.getElementById('paymentMethod');
             sel.innerHTML = siteSettings.paymentMethods.map(m =>
-                `<option value="${m.id}">${m.name}${m.fee ? ` (需加收 $${m.fee} ${m.feeName || '手續費'})` : ''}</option>`
+                `<option value="${m.id}">${m.name}${m.fee ? ` (需加收 ${m.feeType === 'percent' ? `${m.fee}%` : `$${m.fee}`} ${m.feeName || '手續費'})` : ''}</option>`
             ).join('');
             const label = document.getElementById('shippingLabel');
             label.innerText = `運費 (滿$${siteSettings.freeShippingThreshold}免運)`;
@@ -1069,7 +1069,7 @@
             let fee = 0;
             if (method.fee && subtotal > 0) {
                 fee = method.feeType === 'percent'
-                    ? Math.round(subtotal * method.fee / 100)
+                    ? Math.round((subtotal + shipping) * method.fee / 100)
                     : method.fee;
             }
             document.getElementById('feeRow').style.display = fee > 0 ? 'flex' : 'none';
@@ -1104,7 +1104,9 @@
             const method = paymentMethods.find(m => m.id == paymentId) || {};
             const paymentText = method.name || paymentId;
             let shipping = (subtotal >= freeShippingThreshold) ? 0 : shippingFee;
-            let fee = method.fee || 0;
+            let fee = method.fee
+                ? (method.feeType === 'percent' ? Math.round((subtotal + shipping) * method.fee / 100) : method.fee)
+                : 0;
             let finalTotal = subtotal + shipping + fee;
             message += '------------------\n';
             message += `付款方式：${paymentText}\n`;
