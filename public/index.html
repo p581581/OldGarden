@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>老園丁窯烤麵包 - 線上訂購</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌻</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #8B4513;
@@ -13,6 +16,8 @@
             --text-color: #333;
             --white: #fff;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
@@ -23,51 +28,192 @@
             line-height: 1.6;
         }
 
+        /* ── Sticky Header ──────────────────────────────────── */
         header {
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 1rem;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 200;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.3s, box-shadow 0.3s;
         }
-        header h1 { margin: 0; font-size: 1.5rem; }
-        header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
+        header.scrolled {
+            background: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
+        .header-brand {
+            font-family: "Noto Serif TC", serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+            letter-spacing: 0.05em;
+        }
+        .header-links a {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.82rem;
+            text-decoration: none;
+            opacity: 0.85;
+        }
+        .header-links a:hover { opacity: 1; text-decoration: underline; }
 
+        /* ── Hero Banner ────────────────────────────────────── */
+        .hero {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            max-height: 100vh;
+            background: #2c1a0e;
+            overflow: hidden;
+        }
+        .hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.15) 0%,
+                rgba(0,0,0,0.05) 40%,
+                rgba(0,0,0,0.55) 75%,
+                rgba(0,0,0,0.78) 100%
+            );
+        }
+        .hero-content {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 28px 32px;
+        }
+        .hero-title {
+            font-family: "Noto Serif TC", serif;
+            font-weight: 700;
+            font-size: clamp(1.6rem, 4vw, 2.8rem);
+            color: #fff;
+            margin: 0 0 6px;
+            letter-spacing: 0.08em;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            line-height: 1.2;
+        }
+        .hero-tagline {
+            font-family: "Noto Serif TC", serif;
+            font-size: clamp(0.8rem, 1.8vw, 1rem);
+            color: rgba(255,255,255,0.82);
+            letter-spacing: 0.18em;
+            margin: 0 0 14px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+        }
+        .hero-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .hero-tag {
+            background: rgba(255,255,255,0.18);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: clamp(0.72rem, 1.5vw, 0.85rem);
+            letter-spacing: 0.03em;
+        }
+        .hero-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.15);
+            font-size: 5rem;
+        }
+
+        /* ── About Section ──────────────────────────────────── */
+        .about-section {
+            background: var(--white);
+            border-top: 3px solid var(--accent-color);
+            padding: 28px 32px;
+        }
+        .about-inner {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .about-section h2 {
+            font-family: "Noto Serif TC", serif;
+            font-size: 1.1rem;
+            color: var(--accent-color);
+            letter-spacing: 0.12em;
+            margin: 0 0 10px;
+            font-weight: 600;
+        }
+        .about-section p {
+            color: #555;
+            font-size: 0.9rem;
+            margin: 10px 0 0;
+            line-height: 1.8;
+        }
+        .tag-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag-group span {
+            display: inline-block;
+            background: #f0f5eb;
+            color: var(--accent-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: bold;
+            border: 1px solid #c8d8b0;
+        }
+
+        /* ── Container ──────────────────────────────────────── */
         .container {
             max-width: 960px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 24px 20px;
         }
 
-        .features {
-            background: var(--white);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 5px solid var(--accent-color);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        /* ── Products Header Row ────────────────────────────── */
+        .products-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
         }
-        .features h2 { color: var(--accent-color); margin-top: 0; }
-        .tag-group span {
-            display: inline-block;
-            background: #e8f5e9;
-            color: var(--accent-color);
-            padding: 5px 10px;
-            border-radius: 15px;
-            margin: 5px 5px 5px 0;
-            font-size: 0.9rem;
-            font-weight: bold;
+        .products-header h2 {
+            font-family: "Noto Serif TC", serif;
+            color: var(--primary-color);
+            font-size: 1.15rem;
+            margin: 0;
+            white-space: nowrap;
+            letter-spacing: 0.05em;
+        }
+        .search-input {
+            flex: 1;
+            padding: 9px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            min-width: 0;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(139,69,19,0.15);
         }
 
+        /* ── Product Grid ───────────────────────────────────── */
         .product-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 19px;
         }
-
         .product-card {
             background: var(--white);
             border-radius: 10px;
@@ -81,7 +227,6 @@
             transform: translateY(-3px);
             box-shadow: 0 6px 16px rgba(0,0,0,0.15);
         }
-
         .product-img-placeholder {
             width: 100%;
             aspect-ratio: 3 / 2;
@@ -99,15 +244,19 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
             display: block;
         }
-
         .product-info { padding: 12px; flex: 1; display: flex; flex-direction: column; }
-        .product-title { font-size: 1rem; font-weight: bold; color: var(--primary-color); }
+        .product-title {
+            font-family: "Noto Serif TC", serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
         .product-meta { color: #888; font-size: 0.8rem; margin: 3px 0; }
         .product-desc { font-size: 0.82rem; margin-bottom: 10px; color: #555; flex: 1; line-height: 1.5; }
         .product-price { font-size: 1rem; font-weight: bold; color: #d32f2f; margin-bottom: 8px; }
-
         .add-btn {
             background-color: var(--primary-color);
             color: var(--white);
@@ -125,7 +274,81 @@
         }
         .add-btn:hover { background-color: #6d360e; }
 
-        /* Scroll to top */
+        /* ── Cart ───────────────────────────────────────────── */
+        .cart-section {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-controls button {
+            background: #eee;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+        .total-row {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #d32f2f;
+            border-top: 2px solid #eee;
+            padding-top: 10px;
+        }
+        select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .btn-checkout {
+            background-color: var(--accent-color);
+            color: white;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-family: inherit;
+        }
+        .btn-checkout:hover { background-color: #435525; }
+
+        /* ── Info Section ───────────────────────────────────── */
+        .info-section {
+            background: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+        .info-section h3 {
+            font-family: "Noto Serif TC", serif;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        #info, #contact, #payment {
+            scroll-margin-top: 20px;
+        }
+
+        /* ── Scroll Top ─────────────────────────────────────── */
         .scroll-top {
             position: fixed;
             bottom: 70px;
@@ -147,95 +370,7 @@
         .scroll-top.show { opacity: 1; transform: translateY(0); }
         .scroll-top:hover { background-color: #6d360e; }
 
-        .cart-section {
-            background: var(--white);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 30px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .cart-controls button {
-            background: #eee;
-            border: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin: 10px 0;
-        }
-        .total-row {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #d32f2f;
-            border-top: 2px solid #eee;
-            padding-top: 10px;
-        }
-
-        .info-section {
-            background: #fff;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 10px;
-        }
-
-        #about, #info, #contact, #payment {
-            scroll-margin-top: 70px;
-        }
-
-        .banner {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            overflow: hidden;
-            background: #2c1a0e;
-            position: relative;
-        }
-        .banner img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            display: block;
-        }
-        .banner-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            color: rgba(255,255,255,0.4);
-            font-size: 1rem;
-            gap: 8px;
-        }
-        .banner-placeholder span:first-child { font-size: 3rem; }
-        .info-section h3 { border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; display: inline-block; }
-
-        .btn-checkout {
-            background-color: var(--accent-color);
-            color: white;
-            width: 100%;
-            padding: 15px;
-            font-size: 1.1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        .btn-checkout:hover { background-color: #435525; }
-
+        /* ── Footer ─────────────────────────────────────────── */
         footer {
             background: #2c1a0e;
             color: #ccc;
@@ -250,10 +385,7 @@
             align-items: center;
             gap: 20px;
         }
-        .footer-social {
-            display: flex;
-            gap: 16px;
-        }
+        .footer-social { display: flex; gap: 16px; }
         .footer-social a {
             display: flex;
             align-items: center;
@@ -283,11 +415,7 @@
             transition: color 0.2s, border-color 0.2s;
         }
         .footer-nav a:hover { color: #fff; border-bottom-color: #fff; }
-        .footer-copy {
-            font-size: 0.78rem;
-            color: #888;
-            text-align: center;
-        }
+        .footer-copy { font-size: 0.78rem; color: #888; text-align: center; }
         .footer-copy a { color: #666; text-decoration: none; }
         .footer-copy a:hover { color: #aaa; }
         .footer-divider {
@@ -297,54 +425,56 @@
             background: rgba(255,255,255,0.1);
         }
 
-        select, input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 10px;
-        }
+        .loading-msg { text-align: center; color: #999; padding: 40px 0; }
 
-        .loading-msg {
-            text-align: center;
-            color: #999;
-            padding: 40px 0;
+        @media (max-width: 600px) {
+            .hero-content { padding: 16px 18px; }
+            .about-section { padding: 20px 18px; }
+            .hero-tags { gap: 6px; }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>🌻 老園丁窯烤麵包</h1>
-    <p>全素．無蛋奶．無油．窯烤麥香</p>
+<!-- Sticky Header -->
+<header id="siteHeader">
+    <span class="header-brand">🌻 老園丁窯烤麵包</span>
+    <div class="header-links">
+        <a href="/login.html">管理員</a>
+    </div>
 </header>
 
-<div class="banner" id="banner">
-    <div class="banner-placeholder">
-        <span>🌻</span>
-        <span>老園丁窯烤麵包</span>
+<!-- Hero Banner -->
+<div class="hero" id="banner">
+    <div class="hero-placeholder">🌻</div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">老園丁窯烤麵包</h1>
+        <p class="hero-tagline">全素．無蛋奶．無油．窯烤麥香</p>
+        <div class="hero-tags">
+            <span class="hero-tag">🥖 全素無蛋奶</span>
+            <span class="hero-tag">🌾 無漂白麵粉</span>
+            <span class="hero-tag">🔥 專業窯烤</span>
+            <span class="hero-tag">🌽 生物可分解包裝</span>
+        </div>
     </div>
 </div>
 
+<!-- About Section -->
+<section class="about-section" id="about">
+    <div class="about-inner">
+        <h2>關於老園丁</h2>
+        <p>我們使用原料單純，吃得到食物最原始的味道。包裝使用玉米澱粉製成之分解袋，約 3–6 個月即可於土壤分解，一起尊重生態，保護地球。</p>
+    </div>
+</section>
+
 <div class="container">
 
-    <section class="features" id="about">
-        <h2>關於老園丁</h2>
-        <div class="tag-group">
-            <span>🥖 全素無蛋奶</span>
-            <span>🥖 無漂白麵粉</span>
-            <span>🥖 專業窯烤</span>
-            <span>🌽 生物可分解包裝</span>
-        </div>
-        <p>我們使用原料單純，吃得到食物最原始的味道。包裝使用玉米澱粉製成之分解袋，約3-6個月即可於土壤分解，一起尊重生態，保護地球。</p>
-    </section>
-
-    <h2 style="text-align: center; color: var(--primary-color);">🍞 美味全品項</h2>
-    <div style="margin-bottom: 16px;">
-        <input type="text" id="searchInput" placeholder="搜尋商品名稱..." oninput="searchProducts()"
-            style="padding:9px 14px;border:1px solid #ccc;border-radius:6px;font-size:0.95rem;font-family:inherit;width:100%;box-sizing:border-box;margin:0;">
+    <div class="products-header">
+        <h2>🍞 美味全品項</h2>
+        <input class="search-input" type="text" id="searchInput" placeholder="搜尋商品名稱..." oninput="searchProducts()">
     </div>
+
     <div class="product-list" id="productList">
         <div class="loading-msg" style="grid-column:1/-1">載入商品中...</div>
     </div>
@@ -400,10 +530,14 @@
         帳號：0392976033302<br>
         戶名：楊玲琴<br>
         <small>*匯款後請告知訂購人姓名與末五碼</small></p>
+    </section>
 
-        <p id="contact"><strong>聯絡我們：</strong><br>
-        電話：0970-567 500<br>
-        地址：<a href="https://maps.app.goo.gl/jeSy8iMzBLLLnuSx9" target="_blank" rel="noopener" style="color:var(--primary-color);">雲林縣斗南鎮阿丹里阿丹1-20號</a></p>
+    <section class="info-section" id="contact" style="scroll-margin-top:20px;">
+        <h3>📍 聯絡我們</h3>
+        <p>
+            <strong>電話：</strong>0970-567 500<br>
+            <strong>地址：</strong><a href="https://maps.app.goo.gl/jeSy8iMzBLLLnuSx9" target="_blank" rel="noopener" style="color:var(--primary-color);">雲林縣斗南鎮阿丹里阿丹1-20號</a>
+        </p>
         <iframe
             src="https://maps.google.com/maps?q=23.6535048,120.5120626&t=&z=17&ie=UTF8&iwloc=&output=embed"
             width="100%" height="500"
@@ -444,18 +578,12 @@
     let products = [];
     let cart = {};
 
-    // 取得商品圖片 HTML（Blob → URL → 文字）
     function getImageHtml(p) {
-        if (p.imagePath) {
-            return `<img src="${p.imagePath}" alt="${p.name}">`;
-        } else if (p.url) {
-            return `<img src="${p.url}" alt="${p.name}">`;
-        } else {
-            return `<span>${p.name}</span>`;
-        }
+        if (p.imagePath) return `<img src="${p.imagePath}" alt="${p.name}">`;
+        if (p.url) return `<img src="${p.url}" alt="${p.name}">`;
+        return `<span>${p.name}</span>`;
     }
 
-    // 從 API 載入商品
     async function init() {
         try {
             const res = await fetch('/api/products');
@@ -542,11 +670,9 @@
             const product = products.find(p => p.id == id);
             subtotal += product.price * cart[id];
         });
-
         let shipping = (subtotal >= 1000 || subtotal === 0) ? 0 : 160;
         const paymentMethod = document.getElementById('paymentMethod').value;
         let fee = (paymentMethod === 'cod' && subtotal > 0) ? 30 : 0;
-
         document.getElementById('feeRow').style.display = fee > 0 ? 'flex' : 'none';
         document.getElementById('subtotalDisplay').innerText = `$${subtotal}`;
         document.getElementById('shippingDisplay').innerText = shipping === 0 ? (subtotal > 0 ? '免運' : '$0') : `$${shipping}`;
@@ -558,11 +684,9 @@
             alert('購物車是空的喔！');
             return;
         }
-
         let message = '您好，我想訂購老園丁窯烤麵包：\n------------------\n';
         let subtotal = 0;
         const trackItems = [];
-
         Object.keys(cart).forEach(id => {
             const product = products.find(p => p.id == id);
             const amount = product.price * cart[id];
@@ -570,13 +694,11 @@
             message += `${product.name} x ${cart[id]} = $${amount}\n`;
             trackItems.push({ name: product.name, qty: cart[id], price: product.price, amount });
         });
-
         const paymentMethod = document.getElementById('paymentMethod').value;
         const paymentText = paymentMethod === 'cod' ? '貨到付款' : '網路轉帳';
         let shipping = (subtotal >= 1000) ? 0 : 160;
         let fee = (paymentMethod === 'cod') ? 30 : 0;
         let finalTotal = subtotal + shipping + fee;
-
         message += '------------------\n';
         message += `付款方式：${paymentText}\n`;
         if (shipping > 0) message += `運費：$${shipping}\n`;
@@ -584,19 +706,14 @@
         message += `總金額：$${finalTotal}\n\n`;
         message += '訂購人姓名：\n電話：\n地址：\n';
         if (paymentMethod === 'transfer') message += '帳號末五碼：\n';
-
         navigator.clipboard.writeText(message).then(() => {
-            // 統計追蹤（非阻塞）
             fetch('/api/stats/track', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ items: trackItems, total: finalTotal }),
             }).catch(() => {});
-
             const isConfirmed = confirm('訂單內容已複製！\n是否前往官方 Line 貼上訊息訂購？');
-            if (isConfirmed) {
-                window.location.href = 'https://lin.ee/hCtQLUY';
-            }
+            if (isConfirmed) window.location.href = 'https://lin.ee/hCtQLUY';
         }).catch(() => {
             alert('請截圖此畫面傳送給 Line 客服。');
         });
@@ -607,17 +724,27 @@
             const res = await fetch('/api/banner');
             const { url } = await res.json();
             if (url) {
-                document.getElementById('banner').innerHTML = `<img src="${url}" alt="老園丁窯烤麵包">`;
+                const banner = document.getElementById('banner');
+                const placeholder = banner.querySelector('.hero-placeholder');
+                if (placeholder) placeholder.remove();
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = '老園丁窯烤麵包';
+                img.className = 'hero-img';
+                banner.insertBefore(img, banner.firstChild);
             }
         } catch {}
     }
 
-    loadBanner();
-    init();
-
+    // Header scroll effect
+    const header = document.getElementById('siteHeader');
     window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 60);
         document.getElementById('scrollTopBtn').classList.toggle('show', window.scrollY > 300);
     });
+
+    loadBanner();
+    init();
 </script>
 
 </body>
