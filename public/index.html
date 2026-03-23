@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>老園丁窯烤麵包 - 線上訂購</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌻</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌻</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -17,7 +19,9 @@
             --white: #fff;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
@@ -31,7 +35,9 @@
         /* ── Sticky Header ──────────────────────────────────── */
         header {
             position: fixed;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 200;
             padding: 11px 20px;
             display: flex;
@@ -39,18 +45,21 @@
             justify-content: space-between;
             transition: background 0.3s, box-shadow 0.3s;
         }
+
         header.scrolled {
             background: var(--primary-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
         }
+
         .header-brand {
             font-family: "Noto Serif TC", serif;
             font-weight: 700;
             font-size: 1.1rem;
-            color: rgba(255,255,255,0.9);
-            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
             letter-spacing: 0.05em;
         }
+
         .header-cart {
             position: relative;
             cursor: pointer;
@@ -59,14 +68,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: rgba(255,255,255,0.9);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 1.61rem;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
         }
-        .header-cart:hover { color: #fff; }
+
+        .header-cart:hover {
+            color: #fff;
+        }
+
         .cart-badge {
             position: absolute;
-            top: 2px; right: 2px;
+            top: 2px;
+            right: 2px;
             background: #d32f2f;
             color: #fff;
             font-size: 0.65rem;
@@ -85,13 +99,17 @@
         .hero {
             position: relative;
             width: 100%;
-            aspect-ratio: 21 / 9;
+            aspect-ratio: 16 / 9;
             background: #2c1a0e;
             overflow: hidden;
         }
+
         @media (min-width: 900px) {
-            .hero { aspect-ratio: 16 / 9; max-height: 100vh; }
+            .hero {
+                max-height: 100vh;
+            }
         }
+
         .hero-img {
             width: 100%;
             height: 100%;
@@ -99,33 +117,40 @@
             object-position: center;
             display: block;
         }
+
         .hero-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                to bottom,
-                rgba(0,0,0,0.15) 0%,
-                rgba(0,0,0,0.05) 40%,
-                rgba(0,0,0,0.55) 75%,
-                rgba(0,0,0,0.78) 100%
-            );
+            background: linear-gradient(to bottom,
+                    rgba(0, 0, 0, 0.15) 0%,
+                    rgba(0, 0, 0, 0.05) 40%,
+                    rgba(0, 0, 0, 0.55) 75%,
+                    rgba(0, 0, 0, 0.78) 100%);
         }
+
         .hero-content {
             position: absolute;
-            bottom: 0; left: 0; right: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
             padding: 28px 32px;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
         }
+
         @media (min-width: 900px) {
             .hero-content {
                 align-items: center;
                 text-align: center;
                 padding: 40px 10%;
             }
-            .hero-tags { justify-content: center; }
+
+            .hero-tags {
+                justify-content: center;
+            }
         }
+
         .hero-title {
             font-family: "Noto Serif TC", serif;
             font-weight: 700;
@@ -133,39 +158,43 @@
             color: #fff;
             margin: 0 0 6px;
             letter-spacing: 0.08em;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             line-height: 1.2;
         }
+
         .hero-tagline {
             font-family: "Noto Serif TC", serif;
             font-size: clamp(0.8rem, 1.8vw, 1rem);
-            color: rgba(255,255,255,0.82);
+            color: rgba(255, 255, 255, 0.82);
             letter-spacing: 0.18em;
             margin: 0 0 14px;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
         }
+
         .hero-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
         }
+
         .hero-tag {
-            background: rgba(255,255,255,0.18);
+            background: rgba(255, 255, 255, 0.18);
             backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: #fff;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: clamp(0.72rem, 1.5vw, 0.85rem);
             letter-spacing: 0.03em;
         }
+
         .hero-placeholder {
             position: absolute;
             inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: rgba(255,255,255,0.15);
+            color: rgba(255, 255, 255, 0.15);
             font-size: 5rem;
         }
 
@@ -175,10 +204,12 @@
             border-top: 3px solid var(--accent-color);
             padding: 28px 32px;
         }
+
         .about-inner {
             max-width: 960px;
             margin: 0 auto;
         }
+
         .about-section h2 {
             font-family: "Noto Serif TC", serif;
             font-size: 1.1rem;
@@ -187,13 +218,20 @@
             margin: 0 0 10px;
             font-weight: 600;
         }
+
         .about-section p {
             color: #555;
             font-size: 0.9rem;
             margin: 10px 0 0;
             line-height: 1.8;
         }
-        .tag-group { display: flex; flex-wrap: wrap; gap: 8px; }
+
+        .tag-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
         .tag-group span {
             display: inline-block;
             background: #f0f5eb;
@@ -219,6 +257,7 @@
             gap: 16px;
             margin-bottom: 16px;
         }
+
         .products-header h2 {
             font-family: "Noto Serif TC", serif;
             color: var(--primary-color);
@@ -227,6 +266,7 @@
             white-space: nowrap;
             letter-spacing: 0.05em;
         }
+
         .search-input {
             flex: 1;
             padding: 9px 14px;
@@ -238,9 +278,10 @@
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
+
         .search-input:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(139,69,19,0.15);
+            box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.15);
         }
 
         /* ── Product Grid ───────────────────────────────────── */
@@ -249,19 +290,22 @@
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 19px;
         }
+
         .product-card {
             background: var(--white);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.15s, box-shadow 0.15s;
             display: flex;
             flex-direction: column;
         }
+
         .product-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
         }
+
         .product-img-placeholder {
             width: 100%;
             aspect-ratio: 3 / 2;
@@ -275,6 +319,7 @@
             overflow: hidden;
             text-align: center;
         }
+
         .product-img-placeholder img {
             width: 100%;
             height: 100%;
@@ -282,16 +327,42 @@
             object-position: center;
             display: block;
         }
-        .product-info { padding: 12px; flex: 1; display: flex; flex-direction: column; }
+
+        .product-info {
+            padding: 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
         .product-title {
             font-family: "Noto Serif TC", serif;
             font-size: 0.95rem;
             font-weight: 600;
             color: var(--primary-color);
         }
-        .product-meta { color: #888; font-size: 0.8rem; margin: 3px 0; }
-        .product-desc { font-size: 0.82rem; margin-bottom: 10px; color: #555; flex: 1; line-height: 1.5; }
-        .product-price { font-size: 1rem; font-weight: bold; color: #d32f2f; margin-bottom: 8px; }
+
+        .product-meta {
+            color: #888;
+            font-size: 0.8rem;
+            margin: 3px 0;
+        }
+
+        .product-desc {
+            font-size: 0.82rem;
+            margin-bottom: 10px;
+            color: #555;
+            flex: 1;
+            line-height: 1.5;
+        }
+
+        .product-price {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #d32f2f;
+            margin-bottom: 8px;
+        }
+
         .add-btn {
             background-color: var(--primary-color);
             color: var(--white);
@@ -307,12 +378,17 @@
             justify-content: center;
             transition: background 0.15s;
         }
-        .add-btn:hover { background-color: #6d360e; }
+
+        .add-btn:hover {
+            background-color: #6d360e;
+        }
 
         /* ── Cart Dialog ────────────────────────────────────── */
         .cart-overlay {
-            position: fixed; inset: 0; z-index: 500;
-            background: rgba(0,0,0,0.45);
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            background: rgba(0, 0, 0, 0.45);
             display: flex;
             align-items: flex-end;
             justify-content: center;
@@ -320,10 +396,12 @@
             pointer-events: none;
             transition: opacity 0.25s;
         }
+
         .cart-overlay.open {
             opacity: 1;
             pointer-events: all;
         }
+
         .cart-dialog {
             background: var(--white);
             width: 100%;
@@ -331,13 +409,15 @@
             overflow-y: auto;
             border-radius: 18px 18px 0 0;
             padding: 20px;
-            box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
             transform: translateY(30px);
-            transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+            transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
         }
+
         .cart-overlay.open .cart-dialog {
             transform: translateY(0);
         }
+
         .cart-dialog-header {
             display: flex;
             align-items: center;
@@ -346,39 +426,61 @@
             padding-bottom: 12px;
             border-bottom: 2px solid #eee;
         }
+
         .cart-dialog-header h3 {
             margin: 0;
             font-family: "Noto Serif TC", serif;
             color: var(--primary-color);
             font-size: 1.1rem;
         }
+
         .cart-close-btn {
             background: #f0f0f0;
             border: none;
-            width: 32px; height: 32px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             font-size: 1rem;
             cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: #555;
         }
-        .cart-close-btn:hover { background: #ddd; }
+
+        .cart-close-btn:hover {
+            background: #ddd;
+        }
+
         .cart-handle {
-            width: 40px; height: 4px;
-            background: #ddd; border-radius: 2px;
+            width: 40px;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
             margin: 0 auto 14px;
         }
+
         @media (min-width: 600px) {
-            .cart-overlay { align-items: center; }
+            .cart-overlay {
+                align-items: center;
+            }
+
             .cart-dialog {
                 width: 480px;
                 max-height: 80vh;
                 border-radius: 14px;
                 transform: scale(0.96) translateY(8px);
             }
-            .cart-overlay.open .cart-dialog { transform: scale(1) translateY(0); }
-            .cart-handle { display: none; }
+
+            .cart-overlay.open .cart-dialog {
+                transform: scale(1) translateY(0);
+            }
+
+            .cart-handle {
+                display: none;
+            }
         }
+
         .cart-item {
             display: flex;
             justify-content: space-between;
@@ -386,6 +488,7 @@
             padding: 10px 0;
             border-bottom: 1px solid #eee;
         }
+
         .cart-controls button {
             background: #eee;
             border: none;
@@ -394,11 +497,13 @@
             border-radius: 50%;
             cursor: pointer;
         }
+
         .summary-row {
             display: flex;
             justify-content: space-between;
             margin: 10px 0;
         }
+
         .total-row {
             font-size: 1.2rem;
             font-weight: bold;
@@ -406,6 +511,7 @@
             border-top: 2px solid #eee;
             padding-top: 10px;
         }
+
         select {
             padding: 8px;
             border: 1px solid #ccc;
@@ -413,6 +519,7 @@
             width: 100%;
             margin-bottom: 10px;
         }
+
         .btn-checkout {
             background-color: var(--accent-color);
             color: white;
@@ -425,7 +532,10 @@
             margin-top: 20px;
             font-family: inherit;
         }
-        .btn-checkout:hover { background-color: #435525; }
+
+        .btn-checkout:hover {
+            background-color: #435525;
+        }
 
         /* ── Info Section ───────────────────────────────────── */
         .info-section {
@@ -434,6 +544,7 @@
             margin-top: 20px;
             border-radius: 10px;
         }
+
         .info-section h3 {
             font-family: "Noto Serif TC", serif;
             border-bottom: 2px solid var(--accent-color);
@@ -441,7 +552,9 @@
             display: inline-block;
         }
 
-        #info, #contact, #payment {
+        #info,
+        #contact,
+        #payment {
             scroll-margin-top: 20px;
         }
 
@@ -462,10 +575,17 @@
             opacity: 0;
             transform: translateY(10px);
             transition: opacity 0.3s, transform 0.3s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
-        .scroll-top.show { opacity: 1; transform: translateY(0); }
-        .scroll-top:hover { background-color: #6d360e; }
+
+        .scroll-top.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-top:hover {
+            background-color: #6d360e;
+        }
 
         /* ── Footer ─────────────────────────────────────────── */
         footer {
@@ -474,6 +594,7 @@
             padding: 36px 20px 20px;
             margin-top: 40px;
         }
+
         .footer-inner {
             max-width: 960px;
             margin: 0 auto;
@@ -482,7 +603,12 @@
             align-items: center;
             gap: 20px;
         }
-        .footer-social { display: flex; gap: 16px; }
+
+        .footer-social {
+            display: flex;
+            gap: 16px;
+        }
+
         .footer-social a {
             display: flex;
             align-items: center;
@@ -490,19 +616,29 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             color: #fff;
             text-decoration: none;
             transition: background 0.2s;
         }
-        .footer-social a:hover { background: rgba(255,255,255,0.25); }
-        .footer-social svg { width: 22px; height: 22px; fill: currentColor; }
+
+        .footer-social a:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .footer-social svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
         .footer-nav {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 8px 20px;
         }
+
         .footer-nav a {
             color: #ccc;
             text-decoration: none;
@@ -511,220 +647,290 @@
             border-bottom: 1px solid transparent;
             transition: color 0.2s, border-color 0.2s;
         }
-        .footer-nav a:hover { color: #fff; border-bottom-color: #fff; }
-        .footer-copy { font-size: 0.78rem; color: #888; text-align: center; }
-        .footer-copy a { color: #666; text-decoration: none; }
-        .footer-copy a:hover { color: #aaa; }
+
+        .footer-nav a:hover {
+            color: #fff;
+            border-bottom-color: #fff;
+        }
+
+        .footer-copy {
+            font-size: 0.78rem;
+            color: #888;
+            text-align: center;
+        }
+
+        .footer-copy a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .footer-copy a:hover {
+            color: #aaa;
+        }
+
         .footer-divider {
             width: 100%;
             max-width: 400px;
             height: 1px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .loading-msg { text-align: center; color: #999; padding: 40px 0; }
+        .loading-msg {
+            text-align: center;
+            color: #999;
+            padding: 40px 0;
+        }
 
         /* Toast */
         .toast {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(10px);
-            padding: 12px 24px; border-radius: 8px;
-            color: #fff; font-weight: bold;
-            z-index: 1000; opacity: 0; transition: opacity 0.3s, transform 0.3s;
-            max-width: 90vw; text-align: center; pointer-events: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            max-width: 90vw;
+            text-align: center;
+            pointer-events: none;
             white-space: pre-line;
         }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .toast.success { background: #556B2F; }
-        .toast.error { background: #d32f2f; }
-        .toast.info { background: #5a3e28; }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            background: #556B2F;
+        }
+
+        .toast.error {
+            background: #d32f2f;
+        }
+
+        .toast.info {
+            background: #5a3e28;
+        }
 
         @media (max-width: 600px) {
-            .hero-content { padding: 16px 18px; }
-            .about-section { padding: 20px 18px; }
-            .hero-tags { gap: 6px; }
+            .hero-content {
+                padding: 16px 18px;
+            }
+
+            .about-section {
+                padding: 20px 18px;
+            }
+
+            .hero-tags {
+                gap: 6px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<!-- Sticky Header -->
-<header id="siteHeader">
-    <span class="header-brand">🌻 老園丁窯烤麵包</span>
-    <div class="header-cart" onclick="scrollToCart()" title="查看購物車">
-        🛒
-        <span class="cart-badge" id="cartBadge">0</span>
-    </div>
-</header>
+    <!-- Sticky Header -->
+    <header id="siteHeader">
+        <span class="header-brand">🌻 老園丁窯烤麵包</span>
+        <div class="header-cart" onclick="scrollToCart()" title="查看購物車">
+            🛒
+            <span class="cart-badge" id="cartBadge">0</span>
+        </div>
+    </header>
 
-<!-- Hero Banner -->
-<div class="hero" id="banner">
-    <div class="hero-placeholder">🌻</div>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-        <h1 class="hero-title">老園丁窯烤麵包</h1>
-        <p class="hero-tagline">全素．無蛋奶．無油．窯烤麥香</p>
-        <div class="hero-tags">
-            <span class="hero-tag">🥖 全素無蛋奶</span>
-            <span class="hero-tag">🌾 無漂白麵粉</span>
-            <span class="hero-tag">🔥 專業窯烤</span>
-            <span class="hero-tag">🌽 生物可分解包裝</span>
+    <!-- Hero Banner -->
+    <div class="hero" id="banner">
+        <div class="hero-placeholder">🌻</div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">老園丁窯烤麵包</h1>
+            <p class="hero-tagline">全素．無蛋奶．無油．窯烤麥香</p>
+            <div class="hero-tags">
+                <span class="hero-tag">🥖 全素無蛋奶</span>
+                <span class="hero-tag">🌾 無漂白麵粉</span>
+                <span class="hero-tag">🔥 專業窯烤</span>
+                <span class="hero-tag">🌽 生物可分解包裝</span>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- About Section -->
-<section class="about-section" id="about">
-    <div class="about-inner">
-        <h2>關於老園丁</h2>
-        <p>我們使用原料單純，吃得到食物最原始的味道。包裝使用玉米澱粉製成之分解袋，約 3–6 個月即可於土壤分解，一起尊重生態，保護地球。</p>
-    </div>
-</section>
-
-<div class="container">
-
-    <div class="products-header">
-        <h2>🍞 美味全品項</h2>
-        <input class="search-input" type="text" id="searchInput" placeholder="搜尋商品名稱..." oninput="searchProducts()">
-    </div>
-
-    <div class="product-list" id="productList">
-        <div class="loading-msg" style="grid-column:1/-1">載入商品中...</div>
-    </div>
-
-
-    <section class="info-section" id="info">
-        <h3>📦 訂購與保存須知</h3>
-        <p><strong>出貨時間：</strong>每週一至四（常溫配送，連假不出貨）。<br><strong>出窯時間：</strong>上午 10 點。</p>
-
-        <p><strong>麵包保存：</strong></p>
-        <ul>
-            <li>常溫可放 3 天</li>
-            <li>冷凍可放一個月（取出後無需退冰，外鍋加水蒸，或噴水進烤箱）</li>
-        </ul>
-
-        <p id="payment"><strong>匯款資訊 (網路轉帳)：</strong><br>
-        808 玉山銀行 斗六分行<br>
-        帳號：0392976033302<br>
-        戶名：楊玲琴<br>
-        <small>*匯款後請告知訂購人姓名與末五碼</small></p>
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="about-inner">
+            <h2>關於老園丁</h2>
+            <p>我們使用原料單純，吃得到食物最原始的味道。包裝使用玉米澱粉製成之分解袋，約 3–6 個月即可於土壤分解，一起尊重生態，保護地球。</p>
+        </div>
     </section>
 
-    <section class="info-section" id="contact" style="scroll-margin-top:20px;">
-        <h3>📍 聯絡我們</h3>
-        <p>
-            <strong>電話：</strong>0970-567 500<br>
-            <strong>地址：</strong><a href="https://maps.app.goo.gl/jeSy8iMzBLLLnuSx9" target="_blank" rel="noopener" style="color:var(--primary-color);">雲林縣斗南鎮阿丹里阿丹1-20號</a>
-        </p>
-        <iframe
-            src="https://maps.google.com/maps?q=23.6535048,120.5120626&t=&z=17&ie=UTF8&iwloc=&output=embed"
-            width="100%" height="500"
-            style="border:0;border-radius:8px;margin-top:10px;display:block;"
-            allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-    </section>
+    <div class="container">
 
-</div>
+        <div class="products-header">
+            <h2>🍞 美味全品項</h2>
+            <input class="search-input" type="text" id="searchInput" placeholder="搜尋商品名稱..." oninput="searchProducts()">
+        </div>
 
-<!-- Cart Dialog -->
-<div class="cart-overlay" id="cartOverlay" onclick="handleOverlayClick(event)">
-    <div class="cart-dialog">
-        <div class="cart-handle"></div>
-        <div class="cart-dialog-header">
-            <h3>🛒 您的購物車</h3>
-            <button class="cart-close-btn" onclick="closeCart()">✕</button>
+        <div class="product-list" id="productList">
+            <div class="loading-msg" style="grid-column:1/-1">載入商品中...</div>
         </div>
-        <div id="cartItems">
-            <p style="text-align: center; color: #999;">購物車目前是空的</p>
-        </div>
-        <hr style="margin: 16px 0;">
-        <div>
-            <label><strong>選擇付款方式：</strong></label>
-            <select id="paymentMethod" onchange="calculateTotal()">
-                <option value="transfer">網路轉帳 (玉山銀行)</option>
-                <option value="cod">貨到付款 (需加收 $30 手續費)</option>
-            </select>
-        </div>
-        <div class="summary-row"><span>商品小計</span><span id="subtotalDisplay">$0</span></div>
-        <div class="summary-row"><span>運費 (滿$1000免運)</span><span id="shippingDisplay">$0</span></div>
-        <div class="summary-row" id="feeRow" style="display:none;color:#666;"><span>物流手續費</span><span>+$30</span></div>
-        <div class="summary-row total-row"><span>總金額</span><span id="totalDisplay">$0</span></div>
-        <button class="btn-checkout" onclick="checkout()">📋 複製訂單並前往 Line 聯絡</button>
+
+
+        <section class="info-section" id="info">
+            <h3>📦 訂購與保存須知</h3>
+            <p><strong>出貨時間：</strong>每週一至四（常溫配送，連假不出貨）。<br><strong>出窯時間：</strong>上午 10 點。</p>
+
+            <p><strong>麵包保存：</strong></p>
+            <ul>
+                <li>常溫可放 3 天</li>
+                <li>冷凍可放一個月（取出後無需退冰，外鍋加水蒸，或噴水進烤箱）</li>
+            </ul>
+
+            <p id="payment"><strong>匯款資訊 (網路轉帳)：</strong><br>
+                808 玉山銀行 斗六分行<br>
+                帳號：0392976033302<br>
+                戶名：楊玲琴<br>
+                <small>*匯款後請告知訂購人姓名與末五碼</small>
+            </p>
+        </section>
+
+        <section class="info-section" id="contact" style="scroll-margin-top:20px;">
+            <h3>📍 聯絡我們</h3>
+            <p>
+                <strong>電話：</strong>0970-567 500<br>
+                <strong>地址：</strong><a href="https://maps.app.goo.gl/jeSy8iMzBLLLnuSx9" target="_blank" rel="noopener"
+                    style="color:var(--primary-color);">雲林縣斗南鎮阿丹里阿丹1-20號</a>
+            </p>
+            <iframe
+                src="https://maps.google.com/maps?q=23.6535048,120.5120626&t=&z=17&ie=UTF8&iwloc=&output=embed"
+                width="100%" height="500"
+                style="border:0;border-radius:8px;margin-top:10px;display:block;"
+                allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </section>
+
     </div>
-</div>
 
-<div class="toast" id="toast"></div>
-<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到頂部">↑</button>
-
-<footer>
-    <div class="footer-inner">
-        <div class="footer-social">
-            <a href="https://www.facebook.com/oldgardenerbread" target="_blank" rel="noopener" title="Facebook">
-                <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-            </a>
-            <a href="https://www.instagram.com/old_gardener40534" target="_blank" rel="noopener" title="Instagram">
-                <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            </a>
-            <a href="https://line.me/R/ti/p/@jfc3217k" target="_blank" rel="noopener" title="官方 LINE">
-                <svg viewBox="0 0 24 24"><path d="M21 11.5c0-4.08-4.03-7.4-9-7.4S3 7.42 3 11.5c0 3.66 3.21 6.73 7.54 7.3.29.06.69.2.79.44.09.23.06.58.03.81l-.13.77c-.04.23-.18.9.79.49s5.22-3.09 7.12-5.29c1.31-1.46 1.86-2.93 1.86-4.52z"/><path fill="#2c1a0e" d="M9.5 9.75h-.75a.25.25 0 0 0-.25.25v3.5c0 .14.11.25.25.25h.75c.14 0 .25-.11.25-.25v-3.5a.25.25 0 0 0-.25-.25zm5.25 0h-.75a.25.25 0 0 0-.25.25v2.08l-1.6-2.22a.26.26 0 0 0-.04-.05h-.81a.25.25 0 0 0-.25.25v3.5c0 .14.11.25.25.25h.75c.14 0 .25-.11.25-.25v-2.08l1.61 2.22.04.05h.8c.14 0 .25-.11.25-.25V10a.25.25 0 0 0-.25-.25z"/></svg>
-            </a>
+    <!-- Cart Dialog -->
+    <div class="cart-overlay" id="cartOverlay" onclick="handleOverlayClick(event)">
+        <div class="cart-dialog">
+            <div class="cart-handle"></div>
+            <div class="cart-dialog-header">
+                <h3>🛒 您的購物車</h3>
+                <button class="cart-close-btn" onclick="closeCart()">✕</button>
+            </div>
+            <div id="cartItems">
+                <p style="text-align: center; color: #999;">購物車目前是空的</p>
+            </div>
+            <hr style="margin: 16px 0;">
+            <div>
+                <label><strong>選擇付款方式：</strong></label>
+                <select id="paymentMethod" onchange="calculateTotal()">
+                    <option value="transfer">網路轉帳 (玉山銀行)</option>
+                    <option value="cod">貨到付款 (需加收 $30 手續費)</option>
+                </select>
+            </div>
+            <div class="summary-row"><span>商品小計</span><span id="subtotalDisplay">$0</span></div>
+            <div class="summary-row"><span>運費 (滿$1000免運)</span><span id="shippingDisplay">$0</span></div>
+            <div class="summary-row" id="feeRow" style="display:none;color:#666;"><span>物流手續費</span><span>+$30</span>
+            </div>
+            <div class="summary-row total-row"><span>總金額</span><span id="totalDisplay">$0</span></div>
+            <button class="btn-checkout" onclick="checkout()">📋 複製訂單並前往 Line 聯絡</button>
         </div>
-        <nav class="footer-nav">
-            <a href="#about">關於我們</a>
-            <a href="#contact">聯絡我們</a>
-            <a href="#payment">匯款資訊</a>
-            <a href="#info">訂購須知</a>
-        </nav>
-        <div class="footer-divider"></div>
-        <p class="footer-copy">© 老園丁窯烤麵包 &nbsp;·&nbsp; <a href="/login.html">管理員入口</a></p>
     </div>
-</footer>
 
-<script>
-    let products = [];
-    let cart = {};
+    <div class="toast" id="toast"></div>
+    <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        title="回到頂部">↑</button>
 
-    function showToast(message, type = 'success', duration = 3000) {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.className = `toast ${type} show`;
-        clearTimeout(toast._timer);
-        toast._timer = setTimeout(() => toast.classList.remove('show'), duration);
-    }
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-social">
+                <a href="https://www.facebook.com/oldgardenerbread" target="_blank" rel="noopener" title="Facebook">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                    </svg>
+                </a>
+                <a href="https://www.instagram.com/old_gardener40534" target="_blank" rel="noopener" title="Instagram">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor"
+                            stroke-width="2" />
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor"
+                            stroke-width="2" />
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" />
+                    </svg>
+                </a>
+                <a href="https://line.me/R/ti/p/@jfc3217k" target="_blank" rel="noopener" title="官方 LINE">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M21 11.5c0-4.08-4.03-7.4-9-7.4S3 7.42 3 11.5c0 3.66 3.21 6.73 7.54 7.3.29.06.69.2.79.44.09.23.06.58.03.81l-.13.77c-.04.23-.18.9.79.49s5.22-3.09 7.12-5.29c1.31-1.46 1.86-2.93 1.86-4.52z" />
+                        <path fill="#2c1a0e"
+                            d="M9.5 9.75h-.75a.25.25 0 0 0-.25.25v3.5c0 .14.11.25.25.25h.75c.14 0 .25-.11.25-.25v-3.5a.25.25 0 0 0-.25-.25zm5.25 0h-.75a.25.25 0 0 0-.25.25v2.08l-1.6-2.22a.26.26 0 0 0-.04-.05h-.81a.25.25 0 0 0-.25.25v3.5c0 .14.11.25.25.25h.75c.14 0 .25-.11.25-.25v-2.08l1.61 2.22.04.05h.8c.14 0 .25-.11.25-.25V10a.25.25 0 0 0-.25-.25z" />
+                    </svg>
+                </a>
+            </div>
+            <nav class="footer-nav">
+                <a href="#about">關於我們</a>
+                <a href="#contact">聯絡我們</a>
+                <a href="#payment">匯款資訊</a>
+                <a href="#info">訂購須知</a>
+            </nav>
+            <div class="footer-divider"></div>
+            <p class="footer-copy">© 老園丁窯烤麵包 &nbsp;·&nbsp; <a href="/login.html">管理員入口</a></p>
+        </div>
+    </footer>
 
-    function getImageHtml(p) {
-        if (p.imagePath) return `<img src="${p.imagePath}" alt="${p.name}">`;
-        if (p.url) return `<img src="${p.url}" alt="${p.name}">`;
-        return `<span>${p.name}</span>`;
-    }
+    <script>
+        let products = [];
+        let cart = {};
 
-    async function init() {
-        try {
-            const res = await fetch('/api/products');
-            if (!res.ok) throw new Error('載入失敗');
-            products = await res.json();
-        } catch {
-            products = [];
+        function showToast(message, type = 'success', duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => toast.classList.remove('show'), duration);
         }
-        renderProducts();
-    }
 
-    function searchProducts() {
-        const q = document.getElementById('searchInput').value.trim().toLowerCase();
-        const filtered = q ? products.filter(p => p.name.toLowerCase().includes(q)) : products;
-        renderProducts(filtered);
-    }
+        function getImageHtml(p) {
+            if (p.imagePath) return `<img src="${p.imagePath}" alt="${p.name}">`;
+            if (p.url) return `<img src="${p.url}" alt="${p.name}">`;
+            return `<span>${p.name}</span>`;
+        }
 
-    function renderProducts(list = products) {
-        const container = document.getElementById('productList');
-        if (products.length === 0) {
-            container.innerHTML = '<div class="loading-msg" style="grid-column:1/-1">暫無商品，請稍後再試。</div>';
-            return;
+        async function init() {
+            try {
+                const res = await fetch('/api/products');
+                if (!res.ok) throw new Error('載入失敗');
+                products = await res.json();
+            } catch {
+                products = [];
+            }
+            renderProducts();
         }
-        if (list.length === 0) {
-            container.innerHTML = '<div class="loading-msg" style="grid-column:1/-1">找不到符合的商品。</div>';
-            return;
+
+        function searchProducts() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            const filtered = q ? products.filter(p => p.name.toLowerCase().includes(q)) : products;
+            renderProducts(filtered);
         }
-        container.innerHTML = list.map(p => `
+
+        function renderProducts(list = products) {
+            const container = document.getElementById('productList');
+            if (products.length === 0) {
+                container.innerHTML = '<div class="loading-msg" style="grid-column:1/-1">暫無商品，請稍後再試。</div>';
+                return;
+            }
+            if (list.length === 0) {
+                container.innerHTML = '<div class="loading-msg" style="grid-column:1/-1">找不到符合的商品。</div>';
+                return;
+            }
+            container.innerHTML = list.map(p => `
             <div class="product-card">
                 <div class="product-img-placeholder">${getImageHtml(p)}</div>
                 <div class="product-info">
@@ -735,56 +941,56 @@
                 </div>
             </div>
         `).join('');
-    }
-
-    function scrollToCart() { openCart(); }
-
-    function openCart() {
-        document.getElementById('cartOverlay').classList.add('open');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeCart() {
-        document.getElementById('cartOverlay').classList.remove('open');
-        document.body.style.overflow = '';
-    }
-
-    function handleOverlayClick(e) {
-        if (e.target === document.getElementById('cartOverlay')) closeCart();
-    }
-
-    function updateCartBadge() {
-        const total = Object.values(cart).reduce((s, n) => s + n, 0);
-        const badge = document.getElementById('cartBadge');
-        badge.textContent = total;
-        badge.style.display = total > 0 ? 'flex' : 'none';
-    }
-
-    function addToCart(id) {
-        cart[id] = (cart[id] || 0) + 1;
-        renderCart();
-        updateCartBadge();
-    }
-
-    function updateQty(id, change) {
-        if ((cart[id] || 0) + change <= 0) {
-            delete cart[id];
-        } else {
-            cart[id] += change;
         }
-        renderCart();
-        updateCartBadge();
-    }
 
-    function renderCart() {
-        const cartContainer = document.getElementById('cartItems');
-        const items = Object.keys(cart);
-        if (items.length === 0) {
-            cartContainer.innerHTML = '<p style="text-align: center; color: #999;">購物車目前是空的</p>';
-        } else {
-            cartContainer.innerHTML = items.map(id => {
-                const product = products.find(p => p.id == id);
-                return `
+        function scrollToCart() { openCart(); }
+
+        function openCart() {
+            document.getElementById('cartOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCart() {
+            document.getElementById('cartOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function handleOverlayClick(e) {
+            if (e.target === document.getElementById('cartOverlay')) closeCart();
+        }
+
+        function updateCartBadge() {
+            const total = Object.values(cart).reduce((s, n) => s + n, 0);
+            const badge = document.getElementById('cartBadge');
+            badge.textContent = total;
+            badge.style.display = total > 0 ? 'flex' : 'none';
+        }
+
+        function addToCart(id) {
+            cart[id] = (cart[id] || 0) + 1;
+            renderCart();
+            updateCartBadge();
+        }
+
+        function updateQty(id, change) {
+            if ((cart[id] || 0) + change <= 0) {
+                delete cart[id];
+            } else {
+                cart[id] += change;
+            }
+            renderCart();
+            updateCartBadge();
+        }
+
+        function renderCart() {
+            const cartContainer = document.getElementById('cartItems');
+            const items = Object.keys(cart);
+            if (items.length === 0) {
+                cartContainer.innerHTML = '<p style="text-align: center; color: #999;">購物車目前是空的</p>';
+            } else {
+                cartContainer.innerHTML = items.map(id => {
+                    const product = products.find(p => p.id == id);
+                    return `
                     <div class="cart-item">
                         <div>
                             <strong>${product.name}</strong><br>
@@ -797,93 +1003,94 @@
                         </div>
                     </div>
                 `;
-            }).join('');
-        }
-        calculateTotal();
-    }
-
-    function calculateTotal() {
-        let subtotal = 0;
-        Object.keys(cart).forEach(id => {
-            const product = products.find(p => p.id == id);
-            subtotal += product.price * cart[id];
-        });
-        let shipping = (subtotal >= 1000 || subtotal === 0) ? 0 : 160;
-        const paymentMethod = document.getElementById('paymentMethod').value;
-        let fee = (paymentMethod === 'cod' && subtotal > 0) ? 30 : 0;
-        document.getElementById('feeRow').style.display = fee > 0 ? 'flex' : 'none';
-        document.getElementById('subtotalDisplay').innerText = `$${subtotal}`;
-        document.getElementById('shippingDisplay').innerText = shipping === 0 ? (subtotal > 0 ? '免運' : '$0') : `$${shipping}`;
-        document.getElementById('totalDisplay').innerText = `$${subtotal + shipping + fee}`;
-    }
-
-    function checkout() {
-        if (Object.keys(cart).length === 0) {
-            showToast('購物車是空的喔！', 'error');
-            return;
-        }
-        let message = '您好，我想訂購老園丁窯烤麵包：\n------------------\n';
-        let subtotal = 0;
-        const trackItems = [];
-        Object.keys(cart).forEach(id => {
-            const product = products.find(p => p.id == id);
-            const amount = product.price * cart[id];
-            subtotal += amount;
-            message += `${product.name} x ${cart[id]} = $${amount}\n`;
-            trackItems.push({ name: product.name, qty: cart[id], price: product.price, amount });
-        });
-        const paymentMethod = document.getElementById('paymentMethod').value;
-        const paymentText = paymentMethod === 'cod' ? '貨到付款' : '網路轉帳';
-        let shipping = (subtotal >= 1000) ? 0 : 160;
-        let fee = (paymentMethod === 'cod') ? 30 : 0;
-        let finalTotal = subtotal + shipping + fee;
-        message += '------------------\n';
-        message += `付款方式：${paymentText}\n`;
-        if (shipping > 0) message += `運費：$${shipping}\n`;
-        if (fee > 0) message += `物流手續費：$${fee}\n`;
-        message += `總金額：$${finalTotal}\n\n`;
-        message += '訂購人姓名：\n電話：\n地址：\n';
-        if (paymentMethod === 'transfer') message += '帳號末五碼：\n';
-        navigator.clipboard.writeText(message).then(() => {
-            fetch('/api/stats/track', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ items: trackItems, total: finalTotal }),
-            }).catch(() => {});
-            showToast('訂單已複製！即將前往 Line 聯絡…', 'success', 2500);
-            setTimeout(() => { window.location.href = 'https://lin.ee/hCtQLUY'; }, 2500);
-        }).catch(() => {
-            showToast('複製失敗，請截圖此畫面傳送給 Line 客服。', 'error', 5000);
-        });
-    }
-
-    async function loadBanner() {
-        try {
-            const res = await fetch('/api/banner');
-            const { url } = await res.json();
-            if (url) {
-                const banner = document.getElementById('banner');
-                const placeholder = banner.querySelector('.hero-placeholder');
-                if (placeholder) placeholder.remove();
-                const img = document.createElement('img');
-                img.src = url;
-                img.alt = '老園丁窯烤麵包';
-                img.className = 'hero-img';
-                banner.insertBefore(img, banner.firstChild);
+                }).join('');
             }
-        } catch {}
-    }
+            calculateTotal();
+        }
 
-    // Header scroll effect
-    const header = document.getElementById('siteHeader');
-    window.addEventListener('scroll', () => {
-        header.classList.toggle('scrolled', window.scrollY > 60);
-        document.getElementById('scrollTopBtn').classList.toggle('show', window.scrollY > 300);
-    });
+        function calculateTotal() {
+            let subtotal = 0;
+            Object.keys(cart).forEach(id => {
+                const product = products.find(p => p.id == id);
+                subtotal += product.price * cart[id];
+            });
+            let shipping = (subtotal >= 1000 || subtotal === 0) ? 0 : 160;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            let fee = (paymentMethod === 'cod' && subtotal > 0) ? 30 : 0;
+            document.getElementById('feeRow').style.display = fee > 0 ? 'flex' : 'none';
+            document.getElementById('subtotalDisplay').innerText = `$${subtotal}`;
+            document.getElementById('shippingDisplay').innerText = shipping === 0 ? (subtotal > 0 ? '免運' : '$0') : `$${shipping}`;
+            document.getElementById('totalDisplay').innerText = `$${subtotal + shipping + fee}`;
+        }
 
-    loadBanner();
-    init();
-</script>
+        function checkout() {
+            if (Object.keys(cart).length === 0) {
+                showToast('購物車是空的喔！', 'error');
+                return;
+            }
+            let message = '您好，我想訂購老園丁窯烤麵包：\n------------------\n';
+            let subtotal = 0;
+            const trackItems = [];
+            Object.keys(cart).forEach(id => {
+                const product = products.find(p => p.id == id);
+                const amount = product.price * cart[id];
+                subtotal += amount;
+                message += `${product.name} x ${cart[id]} = $${amount}\n`;
+                trackItems.push({ name: product.name, qty: cart[id], price: product.price, amount });
+            });
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const paymentText = paymentMethod === 'cod' ? '貨到付款' : '網路轉帳';
+            let shipping = (subtotal >= 1000) ? 0 : 160;
+            let fee = (paymentMethod === 'cod') ? 30 : 0;
+            let finalTotal = subtotal + shipping + fee;
+            message += '------------------\n';
+            message += `付款方式：${paymentText}\n`;
+            if (shipping > 0) message += `運費：$${shipping}\n`;
+            if (fee > 0) message += `物流手續費：$${fee}\n`;
+            message += `總金額：$${finalTotal}\n\n`;
+            message += '訂購人姓名：\n電話：\n地址：\n';
+            if (paymentMethod === 'transfer') message += '帳號末五碼：\n';
+            navigator.clipboard.writeText(message).then(() => {
+                fetch('/api/stats/track', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: trackItems, total: finalTotal }),
+                }).catch(() => { });
+                showToast('訂單已複製！即將前往 Line 聯絡…', 'success', 2500);
+                setTimeout(() => { window.location.href = 'https://lin.ee/hCtQLUY'; }, 2500);
+            }).catch(() => {
+                showToast('複製失敗，請截圖此畫面傳送給 Line 客服。', 'error', 5000);
+            });
+        }
+
+        async function loadBanner() {
+            try {
+                const res = await fetch('/api/banner');
+                const { url } = await res.json();
+                if (url) {
+                    const banner = document.getElementById('banner');
+                    const placeholder = banner.querySelector('.hero-placeholder');
+                    if (placeholder) placeholder.remove();
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = '老園丁窯烤麵包';
+                    img.className = 'hero-img';
+                    banner.insertBefore(img, banner.firstChild);
+                }
+            } catch { }
+        }
+
+        // Header scroll effect
+        const header = document.getElementById('siteHeader');
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 60);
+            document.getElementById('scrollTopBtn').classList.toggle('show', window.scrollY > 300);
+        });
+
+        loadBanner();
+        init();
+    </script>
 
 </body>
+
 </html>
