@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老園丁窯烤麵包 - 管理員登入</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌻</text></svg>">
+    <style>
+        :root {
+            --primary-color: #8B4513;
+            --accent-color: #556B2F;
+            --bg-color: #FDF5E6;
+            --white: #fff;
+        }
+        body {
+            font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .login-box {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            width: 100%;
+            max-width: 360px;
+        }
+        .login-box h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin: 0 0 8px;
+            font-size: 1.5rem;
+        }
+        .login-box p {
+            text-align: center;
+            color: #888;
+            margin: 0 0 28px;
+            font-size: 0.9rem;
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(139,69,19,0.15);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 8px;
+        }
+        .btn-login:hover { background-color: #6d360e; }
+        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+        .error-msg {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 12px;
+            display: none;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--accent-color);
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <h1>🌻 老園丁窯烤麵包</h1>
+    <p>管理員登入</p>
+
+    <div class="form-group">
+        <label for="username">帳號</label>
+        <input type="text" id="username" placeholder="請輸入帳號" autocomplete="username">
+    </div>
+    <div class="form-group">
+        <label for="password">密碼</label>
+        <input type="password" id="password" placeholder="請輸入密碼" autocomplete="current-password">
+    </div>
+
+    <button class="btn-login" id="loginBtn" onclick="login()">登入</button>
+    <div class="error-msg" id="errorMsg">帳號或密碼錯誤，請再試一次。</div>
+
+    <a href="/" class="back-link">← 回到訂購頁面</a>
+</div>
+
+<script>
+    // 已登入則直接跳轉
+    const token = localStorage.getItem('admin_token');
+    const exp = localStorage.getItem('admin_token_exp');
+    if (token && exp && Date.now() < parseInt(exp, 10)) {
+        window.location.href = '/admin.html';
+    }
+
+    // Enter 鍵觸發登入
+    document.getElementById('password').addEventListener('keydown', e => {
+        if (e.key === 'Enter') login();
+    });
+
+    async function login() {
+        const user = document.getElementById('username').value.trim();
+        const pass = document.getElementById('password').value;
+        const btn = document.getElementById('loginBtn');
+        const errEl = document.getElementById('errorMsg');
+
+        if (!user || !pass) return;
+
+        btn.disabled = true;
+        btn.textContent = '驗證中...';
+        errEl.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user, pass }),
+            });
+
+            if (res.ok) {
+                const { token } = await res.json();
+                localStorage.setItem('admin_token', token);
+                localStorage.setItem('admin_token_exp', String(Date.now() + 72 * 60 * 60 * 1000));
+                window.location.href = '/admin.html';
+            } else {
+                errEl.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = '登入';
+            }
+        } catch {
+            errEl.textContent = '連線失敗，請檢查網路後再試。';
+            errEl.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = '登入';
+        }
+    }
+</script>
+
+</body>
+</html>
