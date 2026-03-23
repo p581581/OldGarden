@@ -462,6 +462,20 @@
 
         .loading-msg { text-align: center; color: #999; padding: 40px 0; }
 
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(10px);
+            padding: 12px 24px; border-radius: 8px;
+            color: #fff; font-weight: bold;
+            z-index: 1000; opacity: 0; transition: opacity 0.3s, transform 0.3s;
+            max-width: 90vw; text-align: center; pointer-events: none;
+            white-space: pre-line;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { background: #556B2F; }
+        .toast.error { background: #d32f2f; }
+        .toast.info { background: #5a3e28; }
+
         @media (max-width: 600px) {
             .hero-content { padding: 16px 18px; }
             .about-section { padding: 20px 18px; }
@@ -584,6 +598,7 @@
 
 </div>
 
+<div class="toast" id="toast"></div>
 <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到頂部">↑</button>
 
 <footer>
@@ -613,6 +628,14 @@
 <script>
     let products = [];
     let cart = {};
+
+    function showToast(message, type = 'success', duration = 3000) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => toast.classList.remove('show'), duration);
+    }
 
     function getImageHtml(p) {
         if (p.imagePath) return `<img src="${p.imagePath}" alt="${p.name}">`;
@@ -730,7 +753,7 @@
 
     function checkout() {
         if (Object.keys(cart).length === 0) {
-            alert('購物車是空的喔！');
+            showToast('購物車是空的喔！', 'error');
             return;
         }
         let message = '您好，我想訂購老園丁窯烤麵包：\n------------------\n';
@@ -761,10 +784,10 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ items: trackItems, total: finalTotal }),
             }).catch(() => {});
-            const isConfirmed = confirm('訂單內容已複製！\n是否前往官方 Line 貼上訊息訂購？');
-            if (isConfirmed) window.location.href = 'https://lin.ee/hCtQLUY';
+            showToast('訂單已複製！即將前往 Line 聯絡…', 'success', 2500);
+            setTimeout(() => { window.location.href = 'https://lin.ee/hCtQLUY'; }, 2500);
         }).catch(() => {
-            alert('請截圖此畫面傳送給 Line 客服。');
+            showToast('複製失敗，請截圖此畫面傳送給 Line 客服。', 'error', 5000);
         });
     }
 
