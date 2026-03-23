@@ -57,7 +57,7 @@ if "%MODE%"=="2" (
     echo.
     echo [啟動] Vercel Dev 模式：http://localhost:3000
     echo.
-    npx vercel dev
+    npx vercel@latest dev
 )
 
 pause

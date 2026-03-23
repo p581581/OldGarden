@@ -4,7 +4,7 @@
   "description": "老園丁窯烤麵包 - Vercel 全端 API",
   "main": "api/index.js",
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "vercel",
     "debug": "node server.js",
     "build": "echo 'No build step required'"
   },

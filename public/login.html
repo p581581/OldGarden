@@ -46,30 +46,15 @@
             inset: 0;
             background: linear-gradient(135deg, rgba(0,0,0,0.08) 0%, rgba(44,26,14,0.55) 100%);
         }
-        .banner-brand {
-            position: absolute;
-            bottom: 48px;
-            left: 44px;
-            color: rgba(255,255,255,0.92);
-        }
-        .banner-brand .logo { font-size: 2.4rem; line-height: 1; margin-bottom: 10px; }
-        .banner-brand h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            margin-bottom: 6px;
-        }
-        .banner-brand p {
-            font-size: 0.85rem;
-            opacity: 0.75;
-            letter-spacing: 0.04em;
-        }
+
 
         /* ── 右側登入 ── */
         .login-panel {
             width: 420px;
             flex-shrink: 0;
-            background: var(--bg);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -201,6 +186,7 @@
         /* ── 手機版 ── */
         @media (max-width: 700px) {
             .banner-panel { display: none; }
+            body { background: var(--bg); }
             .login-panel {
                 width: 100%;
                 padding: 40px 28px;
@@ -213,11 +199,6 @@
 
 <div class="banner-panel" id="bannerPanel">
     <div class="banner-panel-overlay"></div>
-    <div class="banner-brand">
-        <div class="logo">🌻</div>
-        <h2>老園丁窯烤麵包</h2>
-        <p>Old Gardener Artisan Bread</p>
-    </div>
 </div>
 
 <div class="login-panel">
