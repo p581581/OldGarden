@@ -84,7 +84,7 @@
 
         .product-img-placeholder {
             width: 100%;
-            aspect-ratio: 2 / 3;
+            aspect-ratio: 3 / 2;
             background-color: #f0e8d8;
             display: flex;
             align-items: center;
@@ -113,14 +113,40 @@
             background-color: var(--primary-color);
             color: var(--white);
             border: none;
-            padding: 8px 12px;
+            padding: 9px;
             border-radius: 5px;
             cursor: pointer;
             width: 100%;
-            font-size: 0.9rem;
-            font-family: inherit;
+            font-size: 1.2rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
         }
         .add-btn:hover { background-color: #6d360e; }
+
+        /* Scroll to top */
+        .scroll-top {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .scroll-top.show { opacity: 1; transform: translateY(0); }
+        .scroll-top:hover { background-color: #6d360e; }
 
         .cart-section {
             background: var(--white);
@@ -292,6 +318,8 @@
 
 </div>
 
+<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到頂部">↑</button>
+
 <footer>
     <p>© 老園丁窯烤麵包 Application &nbsp;·&nbsp; <a href="/login.html" style="color: #bbb; text-decoration: none;">管理員入口</a></p>
 </footer>
@@ -346,7 +374,7 @@
                     <div class="product-title">${p.name}</div>
                     <div class="product-meta">${p.weight} / $${p.price}</div>
                     <div class="product-desc">${p.desc}</div>
-                    <button class="add-btn" onclick="addToCart(${p.id})">加入購物車</button>
+                    <button class="add-btn" onclick="addToCart(${p.id})" title="加入購物車">🛒</button>
                 </div>
             </div>
         `).join('');
@@ -459,6 +487,10 @@
     }
 
     init();
+
+    window.addEventListener('scroll', () => {
+        document.getElementById('scrollTopBtn').classList.toggle('show', window.scrollY > 300);
+    });
 </script>
 
 </body>
