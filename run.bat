@@ -42,8 +42,8 @@ if not exist "node_modules" (
 )
 
 echo [選擇] 啟動模式：
-echo   1. Vercel Dev（完整模擬，含 KV / Blob，推薦）
-echo   2. Node.js 直接執行（快速，僅 API）
+echo   1. Vercel
+echo   2. Node
 echo.
 set /p MODE="請輸入 1 或 2（預設 1）："
 if "%MODE%"=="" set MODE=1
