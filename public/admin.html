@@ -446,11 +446,15 @@
 
         if (!name) { showToast('商品名稱不可為空。', 'error'); return; }
 
+        // 保留已上傳的 Blob 圖片路徑
+        const existing = products.find(p => p.id === productId);
+        const imagePath = existing ? (existing.imagePath || '') : '';
+
         try {
             const res = await fetch(`/api/products/${productId}`, {
                 method: 'PUT',
                 headers: authHeaders(),
-                body: JSON.stringify({ name, weight, price: Number(price), desc, url }),
+                body: JSON.stringify({ name, weight, price: Number(price), desc, url, imagePath }),
             });
             if (!res.ok) throw new Error('Save failed');
             const updated = await res.json();
