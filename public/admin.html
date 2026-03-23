@@ -73,7 +73,6 @@
         /* Toolbar */
         .toolbar {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
             flex-wrap: wrap;
@@ -88,25 +87,138 @@
         .btn-danger:hover { background-color: #b71c1c; }
         .btn-save { background-color: var(--primary-color); color: var(--white); }
         .btn-save:hover { background-color: #6d360e; }
+        .btn-back {
+            background: none;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 16px;
+        }
+        .btn-back:hover { background: #f5e8d5; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Product card */
-        .product-card {
+        /* Search */
+        .search-input {
+            padding: 9px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            flex: 1;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(139,69,19,0.15);
+        }
+
+        /* ── Product Grid ───────────────────────────────────── */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+        }
+        .grid-card {
             background: var(--white);
             border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.15s, box-shadow 0.15s;
+            display: flex;
+            flex-direction: column;
+        }
+        .grid-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        .grid-card-img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #f0e8d8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #999;
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .grid-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .grid-card-body {
+            padding: 10px 12px 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .grid-card-name {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .grid-card-price {
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        .grid-card-weight {
+            font-size: 0.78rem;
+            color: #888;
+        }
+        .grid-add-card {
+            background: #f5f5f5;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1 / 1;
+            color: #aaa;
+            font-size: 2rem;
+            transition: background 0.15s, border-color 0.15s;
+            min-height: 120px;
+        }
+        .grid-add-card:hover {
+            background: #eee;
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        .grid-add-label {
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        /* ── Detail View ────────────────────────────────────── */
+        .detail-toolbar-title {
+            flex: 1;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-align: center;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .detail-panel {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 24px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .product-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
-        }
-        .product-card-header h3 { margin: 0; color: var(--primary-color); }
 
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .form-row.full { grid-template-columns: 1fr; }
@@ -127,9 +239,9 @@
         }
         .form-group textarea { resize: vertical; min-height: 60px; }
 
-        .image-section { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px; }
+        .image-section { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 20px; }
         .image-preview {
-            width: 120px; height: 120px;
+            width: 140px; height: 140px;
             border: 2px dashed #ccc;
             border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
@@ -141,25 +253,14 @@
         .image-controls input[type="file"] { font-size: 0.9rem; }
         .upload-progress { font-size: 0.85rem; color: #666; }
 
+        .detail-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+
         .loading { text-align: center; padding: 60px 20px; color: #999; font-size: 1.1rem; }
         .empty-state { text-align: center; padding: 60px 20px; color: #999; }
-
-        /* Search */
-        .search-input {
-            padding: 9px 14px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            flex: 1;
-            min-width: 0;
-            box-sizing: border-box;
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(139,69,19,0.15);
-        }
 
         /* Scroll to top */
         .scroll-top {
@@ -235,6 +336,7 @@
             .image-section { flex-direction: column; }
             .image-preview { width: 100%; height: 150px; }
             .charts-grid { grid-template-columns: 1fr; }
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
         }
     </style>
 </head>
@@ -256,8 +358,8 @@
 <!-- 商品管理 Tab -->
 <div id="tab-products" class="tab-panel active">
     <div class="container">
-        <div class="toolbar">
-            <h2>商品列表</h2>
+        <div class="toolbar" id="toolbar">
+            <h2 style="margin:0">商品列表</h2>
             <input class="search-input" type="text" id="searchInput" placeholder="搜尋商品名稱..." oninput="searchProducts()">
             <button class="btn btn-primary" onclick="addProduct()">+ 新增商品</button>
         </div>
@@ -310,6 +412,8 @@
 
 <script>
     let products = [];
+    let currentView = 'grid';   // 'grid' | 'detail'
+    let selectedProductId = null;
     let pieChartInstance = null;
     let lineChartInstance = null;
 
@@ -356,18 +460,7 @@
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    // ── Products ────────────────────────────────────────────
-    async function loadProducts() {
-        try {
-            const res = await fetch('/api/products');
-            products = await res.json();
-            renderProducts();
-        } catch {
-            document.getElementById('productList').innerHTML =
-                '<div class="empty-state">無法載入商品資料，請重新整理頁面。</div>';
-        }
-    }
-
+    // ── Helpers ─────────────────────────────────────────────
     function escapeHtml(str) {
         if (!str) return '';
         const div = document.createElement('div');
@@ -375,79 +468,153 @@
         return div.innerHTML;
     }
 
-    function getPreviewHtml(p) {
-        if (p.imagePath) return `<img src="${p.imagePath}" alt="${p.name}">`;
-        if (p.url) return `<img src="${p.url}" alt="${p.name}">`;
-        return '尚無圖片';
+    function getImgSrc(p) {
+        return p.imagePath || p.url || null;
+    }
+
+    // ── Toolbar ─────────────────────────────────────────────
+    function setGridToolbar() {
+        document.getElementById('toolbar').innerHTML = `
+            <h2 style="margin:0">商品列表</h2>
+            <input class="search-input" type="text" id="searchInput" placeholder="搜尋商品名稱..." oninput="searchProducts()">
+            <button class="btn btn-primary" onclick="addProduct()">+ 新增商品</button>
+        `;
+    }
+
+    function setDetailToolbar(product) {
+        document.getElementById('toolbar').innerHTML = `
+            <button class="btn btn-back" onclick="backToGrid()">← 返回</button>
+            <span class="detail-toolbar-title">${escapeHtml(product.name)}</span>
+            <button class="btn btn-danger" onclick="deleteProduct(${product.id})">刪除商品</button>
+        `;
+    }
+
+    // ── Products: Grid View ──────────────────────────────────
+    async function loadProducts() {
+        try {
+            const res = await fetch('/api/products');
+            products = await res.json();
+            renderGrid();
+        } catch {
+            document.getElementById('productList').innerHTML =
+                '<div class="empty-state">無法載入商品資料，請重新整理頁面。</div>';
+        }
     }
 
     function searchProducts() {
         const q = document.getElementById('searchInput').value.trim().toLowerCase();
         const filtered = q ? products.filter(p => p.name.toLowerCase().includes(q)) : products;
-        renderProducts(filtered);
+        renderGrid(filtered);
     }
 
-    function renderProducts(list = products) {
+    function renderGrid(list = products) {
+        currentView = 'grid';
+        selectedProductId = null;
+        setGridToolbar();
+
         const container = document.getElementById('productList');
-        if (products.length === 0) {
-            container.innerHTML = '<div class="empty-state">尚無商品，請點擊「新增商品」開始。</div>';
-            return;
-        }
-        if (list.length === 0) {
+        if (list.length === 0 && products.length > 0) {
             container.innerHTML = '<div class="empty-state">找不到符合的商品。</div>';
             return;
         }
-        container.innerHTML = list.map(p => `
-            <div class="product-card" id="card-${p.id}">
-                <div class="product-card-header">
-                    <h3>商品 #${p.id}：${escapeHtml(p.name)}</h3>
-                    <button class="btn btn-danger" onclick="deleteProduct(${p.id})">刪除</button>
-                </div>
 
+        const cards = list.map(p => {
+            const src = getImgSrc(p);
+            const imgHtml = src
+                ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(p.name)}">`
+                : escapeHtml(p.name);
+            return `
+                <div class="grid-card" onclick="showDetail(${p.id})" title="${escapeHtml(p.name)}">
+                    <div class="grid-card-img">${imgHtml}</div>
+                    <div class="grid-card-body">
+                        <div class="grid-card-name">${escapeHtml(p.name)}</div>
+                        <div class="grid-card-price">NT$ ${p.price}</div>
+                        ${p.weight ? `<div class="grid-card-weight">${escapeHtml(p.weight)}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        const addCard = `
+            <div class="grid-add-card" onclick="addProduct()" title="新增商品">
+                <span>+</span>
+                <span class="grid-add-label">新增商品</span>
+            </div>
+        `;
+
+        container.innerHTML = `<div class="product-grid">${cards}${addCard}</div>`;
+    }
+
+    // ── Products: Detail View ────────────────────────────────
+    function showDetail(productId) {
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+
+        currentView = 'detail';
+        selectedProductId = productId;
+        setDetailToolbar(product);
+
+        const src = getImgSrc(product);
+        const previewHtml = src
+            ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(product.name)}">`
+            : '尚無圖片';
+
+        document.getElementById('productList').innerHTML = `
+            <div class="detail-panel">
                 <div class="image-section">
-                    <div class="image-preview" id="preview-${p.id}">${getPreviewHtml(p)}</div>
+                    <div class="image-preview" id="preview-${product.id}">${previewHtml}</div>
                     <div class="image-controls">
-                        <label>上傳圖片至 Blob（最大 5MB）</label>
-                        <input type="file" accept="image/*" onchange="uploadImage(${p.id}, this)">
-                        <div class="upload-progress" id="progress-${p.id}"></div>
+                        <label style="font-weight:bold;font-size:0.9rem;color:#555;">上傳圖片至 Blob（最大 5MB）</label>
+                        <input type="file" accept="image/*" onchange="uploadImage(${product.id}, this)">
+                        <div class="upload-progress" id="progress-${product.id}"></div>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label>商品名稱</label>
-                        <input type="text" id="name-${p.id}" value="${escapeHtml(p.name)}">
+                        <input type="text" id="name-${product.id}" value="${escapeHtml(product.name)}">
                     </div>
                     <div class="form-group">
                         <label>重量</label>
-                        <input type="text" id="weight-${p.id}" value="${escapeHtml(p.weight)}">
+                        <input type="text" id="weight-${product.id}" value="${escapeHtml(product.weight)}">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label>價格 (NT$)</label>
-                        <input type="number" id="price-${p.id}" value="${p.price}" min="0">
+                        <input type="number" id="price-${product.id}" value="${product.price}" min="0">
                     </div>
                     <div class="form-group">
                         <label>外部圖片網址 (備用)</label>
-                        <input type="text" id="url-${p.id}" value="${escapeHtml(p.url || '')}" placeholder="https://...">
+                        <input type="text" id="url-${product.id}" value="${escapeHtml(product.url || '')}" placeholder="https://...">
                     </div>
                 </div>
 
                 <div class="form-row full">
                     <div class="form-group">
                         <label>商品描述</label>
-                        <textarea id="desc-${p.id}">${escapeHtml(p.desc)}</textarea>
+                        <textarea id="desc-${product.id}">${escapeHtml(product.desc)}</textarea>
                     </div>
                 </div>
 
-                <input type="hidden" id="imagePath-${p.id}" value="${p.imagePath || ''}">
-                <button class="btn btn-save" onclick="saveProduct(${p.id})">儲存變更</button>
+                <input type="hidden" id="imagePath-${product.id}" value="${escapeHtml(product.imagePath || '')}">
+
+                <div class="detail-actions">
+                    <button class="btn btn-save" onclick="saveProduct(${product.id})">儲存變更</button>
+                </div>
             </div>
-        `).join('');
+        `;
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function backToGrid() {
+        renderGrid();
+    }
+
+    // ── Upload ───────────────────────────────────────────────
     async function uploadImage(productId, fileInput) {
         const file = fileInput.files[0];
         if (!file) return;
@@ -470,7 +637,6 @@
             if (!res.ok) throw new Error('Upload failed');
             const { url } = await res.json();
 
-            // 只更新 DOM，實際寫入由「儲存變更」完成，避免新商品 Blob 快取延遲問題
             document.getElementById(`preview-${productId}`).innerHTML = `<img src="${url}" alt="商品圖片">`;
             document.getElementById(`imagePath-${productId}`).value = url;
             const product = products.find(p => p.id === productId);
@@ -484,6 +650,7 @@
         }
     }
 
+    // ── Save ─────────────────────────────────────────────────
     async function saveProduct(productId) {
         const name = document.getElementById(`name-${productId}`).value.trim();
         const weight = document.getElementById(`weight-${productId}`).value.trim();
@@ -493,7 +660,6 @@
 
         if (!name) { showToast('商品名稱不可為空。', 'error'); return; }
 
-        // 從 hidden input 讀取，確保上傳後的路徑不遺失
         const imagePath = document.getElementById(`imagePath-${productId}`)?.value || '';
 
         try {
@@ -506,12 +672,16 @@
             const updated = await res.json();
             const idx = products.findIndex(p => p.id === productId);
             if (idx !== -1) products[idx] = updated;
+
+            // 更新 detail toolbar 標題（名稱可能改變）
+            setDetailToolbar(updated);
             showToast('儲存成功！');
         } catch {
             showToast('儲存失敗，請重試。', 'error');
         }
     }
 
+    // ── Add ──────────────────────────────────────────────────
     async function addProduct() {
         try {
             const res = await fetch('/api/products', {
@@ -522,15 +692,14 @@
             if (!res.ok) throw new Error('Create failed');
             const newProduct = await res.json();
             products.push(newProduct);
-            renderProducts();
-            const card = document.getElementById(`card-${newProduct.id}`);
-            if (card) card.scrollIntoView({ behavior: 'smooth' });
-            showToast('新商品已建立！');
+            showDetail(newProduct.id);
+            showToast('新商品已建立，請填寫並儲存商品資料！');
         } catch {
             showToast('新增商品失敗，請重試。', 'error');
         }
     }
 
+    // ── Delete ───────────────────────────────────────────────
     async function deleteProduct(productId) {
         const product = products.find(p => p.id === productId);
         const name = product ? product.name : `#${productId}`;
@@ -542,7 +711,7 @@
             });
             if (!res.ok) throw new Error('Delete failed');
             products = products.filter(p => p.id !== productId);
-            renderProducts();
+            renderGrid();
             showToast('商品已刪除。');
         } catch {
             showToast('刪除失敗，請重試。', 'error');
@@ -566,7 +735,6 @@
         if (!startEl.value) startEl.value = start;
         if (!endEl.value) endEl.value = end;
 
-        // 填充商品下拉選單
         const select = document.getElementById('statsProduct');
         const existingNames = [...select.options].map(o => o.value);
         products.forEach(p => {
@@ -602,9 +770,8 @@
     }
 
     function renderCharts(logs) {
-        // 整理資料
-        const pieAgg = {};  // name → total qty
-        const lineAgg = {}; // date → { qty, amount }
+        const pieAgg = {};
+        const lineAgg = {};
 
         logs.forEach(log => {
             log.items.forEach(item => {
@@ -616,7 +783,6 @@
             lineAgg[log.date].amount += log.total || 0;
         });
 
-        // 圓餅圖
         const pieLabels = Object.keys(pieAgg);
         const pieValues = Object.values(pieAgg);
         const pieColors = ['#8B4513','#556B2F','#DAA520','#CD853F','#6B8E23','#A0522D','#BDB76B'];
@@ -640,7 +806,6 @@
             },
         });
 
-        // 趨勢圖
         const sortedDates = Object.keys(lineAgg).sort();
         const lineQty = sortedDates.map(d => lineAgg[d].qty);
         const lineAmount = sortedDates.map(d => lineAgg[d].amount);
@@ -680,10 +845,9 @@
     }
 
     // ── Init ────────────────────────────────────────────────
-    getToken(); // 若無 token 會跳轉至 login
+    getToken();
     loadProducts();
 
-    // 捲動超過 300px 顯示回頂按鈕
     window.addEventListener('scroll', () => {
         document.getElementById('scrollTopBtn').classList.toggle('show', window.scrollY > 300);
     });
