@@ -390,6 +390,14 @@
                 <div id="bannerProgress" style="font-size:0.85rem;color:#666;"></div>
             </div>
         </div>
+        <div class="banner-card">
+            <h3>關於老園丁 文字內容</h3>
+            <textarea id="aboutTextInput" rows="8" style="width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:0.9rem;resize:vertical;font-family:inherit;" placeholder="輸入關於老園丁的介紹文字，前端將直接顯示此內容…"></textarea>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+                <button class="btn btn-primary" onclick="saveAboutText()">儲存</button>
+                <span id="aboutTextStatus" style="font-size:0.85rem;color:#666;"></span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -882,6 +890,41 @@
         });
     }
 
+    // ── About Text ───────────────────────────────────────────
+    async function loadAboutText() {
+        try {
+            const res = await fetch('/api/settings');
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.aboutText !== undefined) {
+                    document.getElementById('aboutTextInput').value = data.aboutText;
+                }
+            }
+        } catch {}
+    }
+
+    async function saveAboutText() {
+        const text = document.getElementById('aboutTextInput').value;
+        const statusEl = document.getElementById('aboutTextStatus');
+        statusEl.textContent = '儲存中…';
+        try {
+            let current = {};
+            const getRes = await fetch('/api/settings');
+            if (getRes.ok) current = await getRes.json() || {};
+            const res = await fetch('/api/settings', {
+                method: 'PUT',
+                headers: authHeaders(),
+                body: JSON.stringify({ ...current, aboutText: text }),
+            });
+            if (!res.ok) throw new Error();
+            statusEl.textContent = '✓ 已儲存';
+            showToast('關於老園丁內容已更新！');
+        } catch {
+            statusEl.textContent = '儲存失敗，請重試。';
+            showToast('儲存失敗。', 'error');
+        }
+    }
+
     // ── Banner ───────────────────────────────────────────────
     async function loadBanner() {
         try {
@@ -935,6 +978,7 @@
     // ── Init ────────────────────────────────────────────────
     getToken();
     loadBanner();
+    loadAboutText();
     loadProducts();
 
     window.addEventListener('scroll', () => {
