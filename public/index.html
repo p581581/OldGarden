@@ -11,7 +11,7 @@
     <style>
         :root {
             --primary-color: #8B4513;
-            --accent-color: #556B2F;
+            --accent-color: #8B4513;
             --bg-color: #FDF5E6;
             --text-color: #333;
             --white: #fff;
@@ -51,20 +51,41 @@
             text-shadow: 0 1px 4px rgba(0,0,0,0.4);
             letter-spacing: 0.05em;
         }
-        .header-links a {
-            color: rgba(255,255,255,0.85);
-            font-size: 0.82rem;
-            text-decoration: none;
-            opacity: 0.85;
+        .header-cart {
+            position: relative;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 1.4rem;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
         }
-        .header-links a:hover { opacity: 1; text-decoration: underline; }
+        .header-cart:hover { color: #fff; }
+        .cart-badge {
+            position: absolute;
+            top: 2px; right: 2px;
+            background: #d32f2f;
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: bold;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            display: none;
+        }
 
         /* ── Hero Banner ────────────────────────────────────── */
         .hero {
             position: relative;
             width: 100%;
-            aspect-ratio: 16 / 9;
-            max-height: 100vh;
+            aspect-ratio: 21 / 9;
             background: #2c1a0e;
             overflow: hidden;
         }
@@ -90,6 +111,17 @@
             position: absolute;
             bottom: 0; left: 0; right: 0;
             padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        @media (min-width: 900px) {
+            .hero-content {
+                align-items: center;
+                text-align: center;
+                padding: 40px 10%;
+            }
+            .hero-tags { justify-content: center; }
         }
         .hero-title {
             font-family: "Noto Serif TC", serif;
@@ -439,8 +471,9 @@
 <!-- Sticky Header -->
 <header id="siteHeader">
     <span class="header-brand">🌻 老園丁窯烤麵包</span>
-    <div class="header-links">
-        <a href="/login.html">管理員</a>
+    <div class="header-cart" onclick="scrollToCart()" title="查看購物車">
+        🛒
+        <span class="cart-badge" id="cartBadge">0</span>
     </div>
 </header>
 
@@ -624,9 +657,21 @@
         `).join('');
     }
 
+    function scrollToCart() {
+        document.querySelector('.cart-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function updateCartBadge() {
+        const total = Object.values(cart).reduce((s, n) => s + n, 0);
+        const badge = document.getElementById('cartBadge');
+        badge.textContent = total;
+        badge.style.display = total > 0 ? 'flex' : 'none';
+    }
+
     function addToCart(id) {
         cart[id] = (cart[id] || 0) + 1;
         renderCart();
+        updateCartBadge();
     }
 
     function updateQty(id, change) {
@@ -636,6 +681,7 @@
             cart[id] += change;
         }
         renderCart();
+        updateCartBadge();
     }
 
     function renderCart() {
