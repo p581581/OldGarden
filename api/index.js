@@ -34,10 +34,10 @@ const DEFAULT_SETTINGS = {
   freeShippingThreshold: 1000,
   shippingFee: 160,
   paymentMethods: [
-    { id: 'transfer', name: '網路轉帳 (玉山銀行)', feeName: '', fee: 0 },
-    { id: 'cod', name: '貨到付款', feeName: '物流手續費', fee: 30 },
+    { id: 1, name: '網路轉帳 (玉山銀行)', feeName: '', feeType: 'fixed', fee: 0 },
+    { id: 2, name: '貨到付款', feeName: '物流手續費', feeType: 'fixed', fee: 30 },
   ],
-  aboutText: '',
+  aboutText: '我們使用原料單純，吃得到食物最原始的味道。包裝使用玉米澱粉製成之分解袋，約 3–6 個月即可於土壤分解，一起尊重生態，保護地球。',
 };
 
 const SEED_DATA = [

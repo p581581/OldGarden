@@ -773,7 +773,7 @@
     <section class="about-section" id="about">
         <div class="about-inner">
             <h2>關於老園丁</h2>
-            <p>我們使用原料單純，吃得到食物最原始的味道。包裝使用玉米澱粉製成之分解袋，約 3–6 個月即可於土壤分解，一起尊重生態，保護地球。</p>
+            <p id="aboutText">我們使用原料單純，吃得到食物最原始的味道。包裝使用玉米澱粉製成之分解袋，約 3–6 個月即可於土壤分解，一起尊重生態，保護地球。</p>
         </div>
     </section>
 
@@ -904,8 +904,8 @@
             freeShippingThreshold: 1000,
             shippingFee: 160,
             paymentMethods: [
-                { id: 'transfer', name: '網路轉帳 (玉山銀行)', feeName: '', fee: 0 },
-                { id: 'cod', name: '貨到付款', feeName: '物流手續費', fee: 30 }
+                { id: 1, name: '網路轉帳 (玉山銀行)', feeName: '', feeType: 'fixed', fee: 0 },
+                { id: 2, name: '貨到付款', feeName: '物流手續費', feeType: 'fixed', fee: 30 }
             ]
         };
 
@@ -923,6 +923,8 @@
             ).join('');
             const label = document.getElementById('shippingLabel');
             label.innerText = `運費 (滿$${siteSettings.freeShippingThreshold}免運)`;
+            const aboutEl = document.getElementById('aboutText');
+            if (siteSettings.aboutText) aboutEl.innerText = siteSettings.aboutText;
             calculateTotal();
         }
 
@@ -1063,12 +1065,19 @@
             });
             let shipping = (subtotal >= freeShippingThreshold || subtotal === 0) ? 0 : shippingFee;
             const paymentId = document.getElementById('paymentMethod').value;
-            const method = paymentMethods.find(m => m.id === paymentId) || {};
-            let fee = (method.fee && subtotal > 0) ? method.fee : 0;
+            const method = paymentMethods.find(m => m.id == paymentId) || {};
+            let fee = 0;
+            if (method.fee && subtotal > 0) {
+                fee = method.feeType === 'percent'
+                    ? Math.round(subtotal * method.fee / 100)
+                    : method.fee;
+            }
             document.getElementById('feeRow').style.display = fee > 0 ? 'flex' : 'none';
             if (fee > 0) {
                 document.getElementById('feeLabel').innerText = method.feeName || '手續費';
-                document.getElementById('feeAmount').innerText = `+$${fee}`;
+                document.getElementById('feeAmount').innerText = method.feeType === 'percent'
+                    ? `+$${fee} (${method.fee}%)`
+                    : `+$${fee}`;
             }
             document.getElementById('subtotalDisplay').innerText = `$${subtotal}`;
             document.getElementById('shippingDisplay').innerText = shipping === 0 ? (subtotal > 0 ? '免運' : '$0') : `$${shipping}`;
@@ -1092,7 +1101,7 @@
             });
             const { freeShippingThreshold, shippingFee, paymentMethods } = siteSettings;
             const paymentId = document.getElementById('paymentMethod').value;
-            const method = paymentMethods.find(m => m.id === paymentId) || {};
+            const method = paymentMethods.find(m => m.id == paymentId) || {};
             const paymentText = method.name || paymentId;
             let shipping = (subtotal >= freeShippingThreshold) ? 0 : shippingFee;
             let fee = method.fee || 0;
@@ -1103,7 +1112,7 @@
             if (fee > 0) message += `${method.feeName || '手續費'}：$${fee}\n`;
             message += `總金額：$${finalTotal}\n\n`;
             message += '訂購人姓名：\n電話：\n地址：\n';
-            if (paymentId === 'transfer') message += '帳號末五碼：\n';
+            if (method.feeName === '' && method.fee === 0) message += '帳號末五碼：\n';
             navigator.clipboard.writeText(message).then(() => {
                 fetch('/api/stats/track', {
                     method: 'POST',

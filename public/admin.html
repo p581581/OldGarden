@@ -1033,19 +1033,23 @@
     function renderPaymentMethodList(methods) {
         const container = document.getElementById('paymentMethodList');
         container.innerHTML = methods.map((m, i) => `
-            <div style="display:grid;grid-template-columns:1fr 2fr 2fr 80px 36px;gap:6px;align-items:center;" data-index="${i}">
-                <input value="${m.id}" placeholder="id" style="padding:6px;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" data-field="id">
+            <div style="display:grid;grid-template-columns:36px 2fr 2fr 90px 80px 36px;gap:6px;align-items:center;" data-index="${i}" data-id="${m.id}">
+                <span style="text-align:center;font-size:0.85rem;color:#aaa;">${m.id}</span>
                 <input value="${m.name}" placeholder="顯示名稱" style="padding:6px;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" data-field="name">
                 <input value="${m.feeName}" placeholder="手續費名稱" style="padding:6px;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" data-field="feeName">
-                <input type="number" value="${m.fee}" placeholder="手續費" min="0" style="padding:6px;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" data-field="fee">
+                <select data-field="feeType" style="padding:6px;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;">
+                    <option value="fixed" ${(m.feeType||'fixed')==='fixed'?'selected':''}>固定金額</option>
+                    <option value="percent" ${m.feeType==='percent'?'selected':''}>百分比 %</option>
+                </select>
+                <input type="number" value="${m.fee}" placeholder="0" min="0" style="padding:6px;border:1px solid #ddd;border-radius:6px;font-size:0.85rem;" data-field="fee">
                 <button onclick="removePaymentMethodRow(${i})" style="background:#fee;border:none;border-radius:6px;cursor:pointer;font-size:1rem;padding:4px 8px;">✕</button>
             </div>`).join('');
     }
 
     function addPaymentMethodRow() {
-        const rows = document.querySelectorAll('#paymentMethodList [data-index]');
         const methods = collectPaymentMethods();
-        methods.push({ id: '', name: '', feeName: '', fee: 0 });
+        const nextId = methods.length > 0 ? Math.max(...methods.map(m => m.id)) + 1 : 1;
+        methods.push({ id: nextId, name: '', feeName: '', feeType: 'fixed', fee: 0 });
         renderPaymentMethodList(methods);
     }
 
@@ -1057,9 +1061,10 @@
 
     function collectPaymentMethods() {
         return Array.from(document.querySelectorAll('#paymentMethodList [data-index]')).map(row => ({
-            id: row.querySelector('[data-field="id"]').value.trim(),
+            id: Number(row.dataset.id),
             name: row.querySelector('[data-field="name"]').value.trim(),
             feeName: row.querySelector('[data-field="feeName"]').value.trim(),
+            feeType: row.querySelector('[data-field="feeType"]').value,
             fee: Number(row.querySelector('[data-field="fee"]').value) || 0,
         }));
     }
