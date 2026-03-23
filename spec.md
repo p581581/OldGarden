@@ -78,15 +78,86 @@
 - **POST `/api/stats/track`**: **數據採集**。每當使用者點擊前端「複製按鈕」時呼叫，紀錄：日期、品項、數量、金額。
 - **GET `/api/stats`**: 取得統計報表數據，需支援日期區間篩選。
 
-### 4. 登入驗證 API (stats API)
+### 4. 登入驗證 API
 登入驗證機制。
 - **POST `/api/login`**: 比對環境變數，核發 3 天效期的 Token。
+
+### 5. 訂單設置 API (Settings API)
+管理免運規則、付款方式、素材內容等全站設定。資料儲存於 Upstash Redis 的 `bakery_settings` key。
+
+* **GET `/api/settings`**
+    * **描述**: 取得全站設定。
+    * **邏輯**: 若 Redis 中 `bakery_settings` 為空，回傳預設值（見下方 Schema）。
+    * **權限**: 公開（前端 index.html 需讀取）。
+* **PUT `/api/settings`**
+    * **描述**: 更新全站設定（整筆覆寫）。
+    * **權限**: 需驗證管理員身分。
+
+#### Settings Schema (`bakery_settings`)
+```json
+{
+  "freeShippingThreshold": 1000,
+  "shippingFee": 160,
+  "paymentMethods": [
+    { "id": "transfer", "name": "網路轉帳 (玉山銀行)", "feeName": "", "fee": 0 },
+    { "id": "cod",      "name": "貨到付款",              "feeName": "物流手續費", "fee": 30 }
+  ],
+  "aboutText": ""
+}
+```
+
+| 欄位 | 型別 | 說明 |
+|---|---|---|
+| `freeShippingThreshold` | number | 訂單金額達此數值時免運費 |
+| `shippingFee` | number | 未達免運門檻時收取的運費 |
+| `paymentMethods` | array | 付款方式清單，順序即前端下拉選單順序 |
+| `paymentMethods[].id` | string | 唯一識別碼（英數，不可重複） |
+| `paymentMethods[].name` | string | 前端顯示名稱 |
+| `paymentMethods[].feeName` | string | 手續費說明文字（空字串表示無手續費） |
+| `paymentMethods[].fee` | number | 手續費金額（0 表示無） |
+| `aboutText` | string | 「關於老園丁」區塊的文字內容，前端直接渲染 |
+
 ---
 
-## 5. 後台統計畫面 (Admin Stats Dashboard)
+## 5. 後台管理頁面 (admin.html) Tab 結構
+
+### Tab 一覽
+| Tab 名稱 | Tab ID | 說明 |
+|---|---|---|
+| 素材管理 | `tab-banner` | Banner 圖片 + 關於老園丁文字內容 |
+| 訂單設置 | `tab-settings` | 免運規則 / 付款方式管理 |
+| 商品管理 | `tab-products` | 商品 CRUD |
+| 統計報表 | `tab-stats` | Chart.js 統計圖表 |
+
+---
+
+### A. 素材管理 Tab（`tab-banner`）擴充
+原有 Banner 上傳功能不變，新增：
+- **關於老園丁文字內容**：`<textarea>` 輸入區，儲存至 `bakery_settings.aboutText`。
+- 按下「儲存」後呼叫 `PUT /api/settings`，前端 `index.html` 讀取後直接渲染於「關於我們」區塊。
+
+---
+
+### B. 訂單設置 Tab（`tab-settings`，新增）
+
+#### 免運規則
+- 輸入欄位：**免運門檻金額**（`freeShippingThreshold`）、**運費**（`shippingFee`）。
+- 儲存後前端 `index.html` 呼叫 `GET /api/settings` 取得數值，取代原本 hardcode 的 `1000` 與 `160`。
+
+#### 付款方式管理
+- 列出現有付款方式，支援：
+  - **新增**：填入 id、顯示名稱、手續費名稱、手續費金額。
+  - **編輯**：inline 修改各欄位。
+  - **刪除**：移除該筆付款方式。
+- 儲存後前端購物車下拉選單（`<select id="paymentMethod">`）動態從 `GET /api/settings` 建立 `<option>`，不再 hardcode。
+- 運費說明文字（「滿 N 元免運」）由 `freeShippingThreshold` 動態產生。
+
+---
+
+## 6. 後台統計畫面 (Admin Stats Dashboard)
 於 `admin.html` 使用 **Chart.js** 實作以下統計圖表：
 
-### A. 數據篩選器
+### A. 數據篩選器（原 §5 內容，編號調整為 §6）
 - **日期區間**: 支援起訖日期篩選，初始預設顯示「當月」。
 - **商品類別**: 下拉選單可過濾特定商品。
 

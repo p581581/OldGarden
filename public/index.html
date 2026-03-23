@@ -836,19 +836,19 @@
                 </div>
             </div>
             <div id="cartItems">
-                <p style="text-align: center; color: #999;">購物車目前是空的</p>
+                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:20vh;gap:10px;color:#bbb;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    <span style="font-size:0.9rem;">購物車目前是空的</span>
+                </div>
             </div>
             <hr style="margin: 16px 0;">
             <div>
                 <label><strong>選擇付款方式：</strong></label>
-                <select id="paymentMethod" onchange="calculateTotal()">
-                    <option value="transfer">網路轉帳 (玉山銀行)</option>
-                    <option value="cod">貨到付款 (需加收 $30 手續費)</option>
-                </select>
+                <select id="paymentMethod" onchange="calculateTotal()"></select>
             </div>
             <div class="summary-row"><span>商品小計</span><span id="subtotalDisplay">$0</span></div>
-            <div class="summary-row"><span>運費 (滿$1000免運)</span><span id="shippingDisplay">$0</span></div>
-            <div class="summary-row" id="feeRow" style="display:none;color:#666;"><span>物流手續費</span><span>+$30</span>
+            <div class="summary-row"><span id="shippingLabel">運費</span><span id="shippingDisplay">$0</span></div>
+            <div class="summary-row" id="feeRow" style="display:none;color:#666;"><span id="feeLabel">手續費</span><span id="feeAmount">+$0</span>
             </div>
             <div class="summary-row total-row"><span>總金額</span><span id="totalDisplay">$0</span></div>
             <button class="btn-checkout" onclick="checkout()">📋 複製訂單並前往 Line 聯絡</button>
@@ -900,6 +900,31 @@
     <script>
         let products = [];
         let cart = {};
+        let siteSettings = {
+            freeShippingThreshold: 1000,
+            shippingFee: 160,
+            paymentMethods: [
+                { id: 'transfer', name: '網路轉帳 (玉山銀行)', feeName: '', fee: 0 },
+                { id: 'cod', name: '貨到付款', feeName: '物流手續費', fee: 30 }
+            ]
+        };
+
+        async function loadSettings() {
+            try {
+                const res = await fetch('/api/settings');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data) siteSettings = Object.assign(siteSettings, data);
+                }
+            } catch { }
+            const sel = document.getElementById('paymentMethod');
+            sel.innerHTML = siteSettings.paymentMethods.map(m =>
+                `<option value="${m.id}">${m.name}${m.fee ? ` (需加收 $${m.fee} ${m.feeName || '手續費'})` : ''}</option>`
+            ).join('');
+            const label = document.getElementById('shippingLabel');
+            label.innerText = `運費 (滿$${siteSettings.freeShippingThreshold}免運)`;
+            calculateTotal();
+        }
 
         function showToast(message, type = 'success', duration = 3000) {
             const toast = document.getElementById('toast');
@@ -1007,7 +1032,7 @@
             const cartContainer = document.getElementById('cartItems');
             const items = Object.keys(cart);
             if (items.length === 0) {
-                cartContainer.innerHTML = '<p style="text-align: center; color: #999;">購物車目前是空的</p>';
+                cartContainer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:20vh;gap:10px;color:#bbb;"><svg xmlns=\'http://www.w3.org/2000/svg\' width=\'48\' height=\'48\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><circle cx=\'9\' cy=\'21\' r=\'1\'/><circle cx=\'20\' cy=\'21\' r=\'1\'/><path d=\'M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6\'/></svg><span style=\'font-size:0.9rem;\'>購物車目前是空的</span></div>';
             } else {
                 cartContainer.innerHTML = items.map(id => {
                     const product = products.find(p => p.id == id);
@@ -1030,15 +1055,21 @@
         }
 
         function calculateTotal() {
+            const { freeShippingThreshold, shippingFee, paymentMethods } = siteSettings;
             let subtotal = 0;
             Object.keys(cart).forEach(id => {
                 const product = products.find(p => p.id == id);
                 subtotal += product.price * cart[id];
             });
-            let shipping = (subtotal >= 1000 || subtotal === 0) ? 0 : 160;
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            let fee = (paymentMethod === 'cod' && subtotal > 0) ? 30 : 0;
+            let shipping = (subtotal >= freeShippingThreshold || subtotal === 0) ? 0 : shippingFee;
+            const paymentId = document.getElementById('paymentMethod').value;
+            const method = paymentMethods.find(m => m.id === paymentId) || {};
+            let fee = (method.fee && subtotal > 0) ? method.fee : 0;
             document.getElementById('feeRow').style.display = fee > 0 ? 'flex' : 'none';
+            if (fee > 0) {
+                document.getElementById('feeLabel').innerText = method.feeName || '手續費';
+                document.getElementById('feeAmount').innerText = `+$${fee}`;
+            }
             document.getElementById('subtotalDisplay').innerText = `$${subtotal}`;
             document.getElementById('shippingDisplay').innerText = shipping === 0 ? (subtotal > 0 ? '免運' : '$0') : `$${shipping}`;
             document.getElementById('totalDisplay').innerText = `$${subtotal + shipping + fee}`;
@@ -1059,18 +1090,20 @@
                 message += `${product.name} x ${cart[id]} = $${amount}\n`;
                 trackItems.push({ name: product.name, qty: cart[id], price: product.price, amount });
             });
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            const paymentText = paymentMethod === 'cod' ? '貨到付款' : '網路轉帳';
-            let shipping = (subtotal >= 1000) ? 0 : 160;
-            let fee = (paymentMethod === 'cod') ? 30 : 0;
+            const { freeShippingThreshold, shippingFee, paymentMethods } = siteSettings;
+            const paymentId = document.getElementById('paymentMethod').value;
+            const method = paymentMethods.find(m => m.id === paymentId) || {};
+            const paymentText = method.name || paymentId;
+            let shipping = (subtotal >= freeShippingThreshold) ? 0 : shippingFee;
+            let fee = method.fee || 0;
             let finalTotal = subtotal + shipping + fee;
             message += '------------------\n';
             message += `付款方式：${paymentText}\n`;
             if (shipping > 0) message += `運費：$${shipping}\n`;
-            if (fee > 0) message += `物流手續費：$${fee}\n`;
+            if (fee > 0) message += `${method.feeName || '手續費'}：$${fee}\n`;
             message += `總金額：$${finalTotal}\n\n`;
             message += '訂購人姓名：\n電話：\n地址：\n';
-            if (paymentMethod === 'transfer') message += '帳號末五碼：\n';
+            if (paymentId === 'transfer') message += '帳號末五碼：\n';
             navigator.clipboard.writeText(message).then(() => {
                 fetch('/api/stats/track', {
                     method: 'POST',
@@ -1114,6 +1147,7 @@
         });
 
         loadBanner();
+        loadSettings();
         init();
     </script>
 
