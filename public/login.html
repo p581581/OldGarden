@@ -12,28 +12,53 @@
             --bg-color: #FDF5E6;
             --white: #fff;
         }
+        *, *::before, *::after { box-sizing: border-box; }
         body {
             font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* ── 左側 Banner ── */
+        .banner-panel {
+            flex: 1;
+            position: relative;
+            background: #2c1a0e;
+            overflow: hidden;
+        }
+        .banner-panel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+        .banner-panel-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0.35));
+        }
+        /* ── 右側登入 ── */
+        .login-panel {
+            width: 400px;
+            flex-shrink: 0;
+            background: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 36px;
+            overflow-y: auto;
         }
         .login-box {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
             width: 100%;
-            max-width: 360px;
+            max-width: 320px;
         }
         .login-box h1 {
             text-align: center;
             color: var(--primary-color);
-            margin: 0 0 8px;
-            font-size: 1.5rem;
+            margin: 0 0 6px;
+            font-size: 1.4rem;
         }
         .login-box p {
             text-align: center;
@@ -55,7 +80,6 @@
             border: 1px solid #ccc;
             border-radius: 6px;
             font-size: 1rem;
-            box-sizing: border-box;
             font-family: inherit;
         }
         .form-group input:focus {
@@ -94,30 +118,60 @@
             text-decoration: none;
         }
         .back-link:hover { text-decoration: underline; }
+        /* ── 手機版：隱藏 banner，登入區全寬置中 ── */
+        @media (max-width: 700px) {
+            .banner-panel { display: none; }
+            .login-panel {
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="login-box">
-    <h1>🌻 老園丁窯烤麵包</h1>
-    <p>管理員登入</p>
+<div class="banner-panel" id="bannerPanel">
+    <div class="banner-panel-overlay"></div>
+</div>
 
-    <div class="form-group">
-        <label for="username">帳號</label>
-        <input type="text" id="username" placeholder="請輸入帳號" autocomplete="username">
+<div class="login-panel">
+    <div class="login-box">
+        <h1>🌻 老園丁窯烤麵包</h1>
+        <p>管理員登入</p>
+
+        <div class="form-group">
+            <label for="username">帳號</label>
+            <input type="text" id="username" placeholder="請輸入帳號" autocomplete="username">
+        </div>
+        <div class="form-group">
+            <label for="password">密碼</label>
+            <input type="password" id="password" placeholder="請輸入密碼" autocomplete="current-password">
+        </div>
+
+        <button class="btn-login" id="loginBtn" onclick="login()">登入</button>
+        <div class="error-msg" id="errorMsg">帳號或密碼錯誤，請再試一次。</div>
+
+        <a href="/" class="back-link">← 回到訂購頁面</a>
     </div>
-    <div class="form-group">
-        <label for="password">密碼</label>
-        <input type="password" id="password" placeholder="請輸入密碼" autocomplete="current-password">
-    </div>
-
-    <button class="btn-login" id="loginBtn" onclick="login()">登入</button>
-    <div class="error-msg" id="errorMsg">帳號或密碼錯誤，請再試一次。</div>
-
-    <a href="/" class="back-link">← 回到訂購頁面</a>
 </div>
 
 <script>
+    // 載入 Banner
+    (async () => {
+        try {
+            const res = await fetch('/api/banner');
+            const { url } = await res.json();
+            if (url) {
+                const panel = document.getElementById('bannerPanel');
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = '';
+                panel.insertBefore(img, panel.firstChild);
+            }
+        } catch {}
+    })();
+
     // 已登入則直接跳轉
     const token = localStorage.getItem('admin_token');
     const exp = localStorage.getItem('admin_token_exp');
