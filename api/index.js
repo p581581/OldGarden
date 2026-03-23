@@ -1,13 +1,19 @@
 const express = require('express');
 const crypto = require('crypto');
 const multer = require('multer');
-const { put, del, list } = require('@vercel/blob');
+const { put, del } = require('@vercel/blob');
+const { Redis } = require('@upstash/redis');
 
 const app = express();
 app.use(express.json());
 
-const PRODUCTS_BLOB_PATH = 'products.json';
-const LOGS_BLOB_PATH = 'logs.json';
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
+const PRODUCTS_KEY = 'bakery_products';
+const LOGS_KEY = 'order_logs';
 const TOKEN_EXPIRY = 72 * 60 * 60 * 1000; // 72 小時
 
 const SEED_DATA = [
@@ -53,42 +59,26 @@ function adminAuth(req, res, next) {
   next();
 }
 
-// ── Blob 讀寫 products.json ──────────────────────────────────
+// ── Redis 讀寫 products ──────────────────────────────────────
 async function readProducts() {
   try {
-    const { blobs } = await list({ prefix: PRODUCTS_BLOB_PATH });
-    const blob = blobs.find(b => b.pathname === PRODUCTS_BLOB_PATH);
-    if (!blob) return null;
-    const res = await fetch(blob.downloadUrl); // downloadUrl 直接從原始儲存讀取，繞過 CDN 快取
-    return await res.json();
+    return await redis.get(PRODUCTS_KEY);
   } catch { return null; }
 }
 
 async function writeProducts(products) {
-  await put(PRODUCTS_BLOB_PATH, JSON.stringify(products), {
-    access: 'public',
-    addRandomSuffix: false,
-    contentType: 'application/json',
-  });
+  await redis.set(PRODUCTS_KEY, products);
 }
 
-// ── Blob 讀寫 logs.json ──────────────────────────────────────
+// ── Redis 讀寫 logs ──────────────────────────────────────────
 async function readLogs() {
   try {
-    const { blobs } = await list({ prefix: LOGS_BLOB_PATH });
-    const blob = blobs.find(b => b.pathname === LOGS_BLOB_PATH);
-    if (!blob) return [];
-    const res = await fetch(blob.downloadUrl); // 同上，繞過 CDN 快取
-    return await res.json();
+    return (await redis.get(LOGS_KEY)) || [];
   } catch { return []; }
 }
 
 async function writeLogs(logs) {
-  await put(LOGS_BLOB_PATH, JSON.stringify(logs), {
-    access: 'public',
-    addRandomSuffix: false,
-    contentType: 'application/json',
-  });
+  await redis.set(LOGS_KEY, logs);
 }
 
 // ── POST /api/login ──────────────────────────────────────────
