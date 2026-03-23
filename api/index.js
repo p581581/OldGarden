@@ -7,14 +7,18 @@ const { Redis } = require('@upstash/redis');
 const app = express();
 app.use(express.json());
 
-// 延遲初始化，避免環境變數未設定時在模組載入時就崩潰
+// 延遲初始化，相容 Vercel 兩種 Upstash 環境變數命名
 let _redis = null;
 function getRedis() {
   if (_redis) return _redis;
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url   = process.env.UPSTASH_REDIS_REST_URL   || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
   if (!url || !token) {
-    throw new Error('請在環境變數中設定 UPSTASH_REDIS_REST_URL 與 UPSTASH_REDIS_REST_TOKEN');
+    throw new Error(
+      '找不到 Redis 環境變數，請確認 Vercel 已設定以下其中一組：\n' +
+      '  UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN\n' +
+      '  KV_REST_API_URL + KV_REST_API_TOKEN'
+    );
   }
   _redis = new Redis({ url, token });
   return _redis;
