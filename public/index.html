@@ -106,13 +106,14 @@
         .hero {
             position: relative;
             width: 100%;
-            aspect-ratio: 16 / 9;
+            aspect-ratio: 3 / 2;
             background: #2c1a0e;
             overflow: hidden;
         }
 
         @media (min-width: 900px) {
             .hero {
+                aspect-ratio: 16 / 9;
                 max-height: 100vh;
             }
         }
@@ -563,9 +564,10 @@
         }
 
         #info,
+        #about,
         #contact,
         #payment {
-            scroll-margin-top: 20px;
+            scroll-margin-top: var(--header-h, 60px);
         }
 
         /* ── Scroll Top ─────────────────────────────────────── */
@@ -1101,6 +1103,11 @@
 
         // Header scroll effect
         const header = document.getElementById('siteHeader');
+        function updateHeaderVar() {
+            document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+        }
+        updateHeaderVar();
+        window.addEventListener('resize', updateHeaderVar);
         window.addEventListener('scroll', () => {
             header.classList.toggle('scrolled', window.scrollY > 60);
             document.getElementById('scrollTopBtn').classList.toggle('show', window.scrollY > 300);
