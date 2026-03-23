@@ -13,10 +13,11 @@
 ## 2. 儲存架構與資料格式 (Storage & Schema)
 
 ### A. 儲存服務 (Vercel Services)
-- **Vercel Blob**: 
+- **Vercel Blob**:
     1. **Products Metadata**: 儲存 `products.json` 檔案，紀錄所有商品的詳細資訊。
-    2. **Image Files**: 儲存實體圖片檔案（單檔上限 5MB）。
-- **Vercel KV**: 儲存「複製按鈕」觸發的訂單統計日誌 (`order_logs`)。
+    2. **Order Logs**: 儲存 `logs.json` 檔案，紀錄「複製按鈕」觸發的訂單統計日誌。
+    3. **Image Files**: 儲存實體圖片檔案（單檔上限 5MB）。
+- ~~**Vercel KV**~~: 已下架，`order_logs` 改由 Vercel Blob 的 `logs.json` 取代。
 
 ### B. 商品資料欄位 (Product Fields)
 每個商品必須包含以下紀錄：
@@ -44,11 +45,11 @@
 
 
 ### 1. 產品管理 API (Product API)
-負責所有麵包品項的 CRUD 操作。資料儲存在 Vercel KV 的 `bakery_products` 鍵值中。
+負責所有麵包品項的 CRUD 操作。資料儲存在 Vercel Blob 的 `products.json` 檔案中。
 
 * **GET `/api/products`**
     * **描述**: 取得所有產品清單。
-    * **邏輯**: 若 KV 資料庫為空，需自動初始化 (Seed) 原始 5 款麵包資料。
+    * **邏輯**: 若 Blob 中 `products.json` 不存在，需自動初始化 (Seed) 原始 5 款麵包資料。
 * **POST `/api/products`**
     * **描述**: 新增或更新產品（包含上傳圖片至 Blob 並更新 `products.json`）。
     * **權限**: 需驗證管理員身分。

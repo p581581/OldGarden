@@ -419,20 +419,14 @@
             if (!res.ok) throw new Error('Upload failed');
             const { url } = await res.json();
 
-            const saveRes = await fetch(`/api/products/${productId}`, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify({ imagePath: url }),
-            });
-            if (!saveRes.ok) throw new Error('Save failed');
-
+            // 只更新 DOM，實際寫入由「儲存變更」完成，避免新商品 Blob 快取延遲問題
             document.getElementById(`preview-${productId}`).innerHTML = `<img src="${url}" alt="商品圖片">`;
             document.getElementById(`imagePath-${productId}`).value = url;
             const product = products.find(p => p.id === productId);
             if (product) product.imagePath = url;
 
-            progressEl.textContent = '上傳成功！';
-            showToast('圖片上傳成功！');
+            progressEl.textContent = '✓ 圖片已選取，請點擊「儲存變更」完成連結';
+            showToast('圖片上傳完成，請記得點擊儲存變更！');
         } catch {
             progressEl.textContent = '上傳失敗，請重試。';
             showToast('圖片上傳失敗，請重試。', 'error');
