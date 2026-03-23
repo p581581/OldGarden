@@ -42,7 +42,7 @@
             padding: 11px 20px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             transition: background 0.3s, box-shadow 0.3s;
         }
 
@@ -51,6 +51,13 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
         }
 
+        .header-inner {
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
         .header-brand {
             font-family: "Noto Serif TC", serif;
             font-weight: 700;
@@ -137,18 +144,18 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+            gap: 6px;
         }
 
         @media (min-width: 900px) {
             .hero-content {
                 align-items: center;
                 text-align: center;
-                padding: 40px 10%;
+                padding: 40px 10% 60px;
+                bottom: 6%;
+                gap: 14px;
             }
-
-            .hero-tags {
-                justify-content: center;
-            }
+            .hero-tags { justify-content: center; }
         }
 
         .hero-title {
@@ -735,10 +742,12 @@
 
     <!-- Sticky Header -->
     <header id="siteHeader">
-        <span class="header-brand">🌻 老園丁窯烤麵包</span>
-        <div class="header-cart" onclick="scrollToCart()" title="查看購物車">
-            🛒
-            <span class="cart-badge" id="cartBadge">0</span>
+        <div class="header-inner">
+            <span class="header-brand">🌻 老園丁窯烤麵包</span>
+            <div class="header-cart" onclick="scrollToCart()" title="查看購物車">
+                🛒
+                <span class="cart-badge" id="cartBadge">0</span>
+            </div>
         </div>
     </header>
 
@@ -819,7 +828,10 @@
             <div class="cart-handle"></div>
             <div class="cart-dialog-header">
                 <h3>🛒 您的購物車</h3>
-                <button class="cart-close-btn" onclick="closeCart()">✕</button>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <button class="cart-close-btn" onclick="clearCart()" title="清除購物車" style="width:auto;padding:0 10px;border-radius:12px;background:#fee;font-size:0.8rem;color:#a00;">🗑 清除</button>
+                    <button class="cart-close-btn" onclick="closeCart()">✕</button>
+                </div>
             </div>
             <div id="cartItems">
                 <p style="text-align: center; color: #999;">購物車目前是空的</p>
@@ -953,6 +965,13 @@
         function closeCart() {
             document.getElementById('cartOverlay').classList.remove('open');
             document.body.style.overflow = '';
+        }
+
+        function clearCart() {
+            cart = {};
+            renderCart();
+            updateCartBadge();
+            showToast('購物車已清除', 'info');
         }
 
         function handleOverlayClick(e) {
